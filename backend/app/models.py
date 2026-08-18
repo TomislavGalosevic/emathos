@@ -14,9 +14,6 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
-# ---------------------------------------------------------------------------
-# Korisnici
-# ---------------------------------------------------------------------------
 class User(Base):
     __tablename__ = "users"
 
@@ -24,30 +21,19 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    role = Column(String, default="user", nullable=False)  # "user" | "admin"
+    role = Column(String, default="user", nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     progress = relationship("Progress", back_populates="user", cascade="all, delete-orphan")
 
 
-# ---------------------------------------------------------------------------
-# Sadrzaj
-#   Obican kolegij:            Kolegij -> (Teorija, Zadaci)
-#   Primijenjena matematika:   Kolegij -> 3 podrucja (Module) -> (Teorija, Zadaci)
-#
-# "Teorija" i "Zadaci" nisu zasebne tablice nego dva tipa sadrzaja:
-#   Teorija = TheoryItem zapisi, Zadaci = Problem zapisi.
-# Sadrzaj se vjesa na kolegij (module_id = NULL) ili na podrucje (module_id).
-# ---------------------------------------------------------------------------
 class Course(Base):
-    """Kolegij, npr. 'Realna analiza'."""
-
     __tablename__ = "courses"
 
     id = Column(Integer, primary_key=True, index=True)
     naziv = Column(String, nullable=False)
     opis = Column(Text, default="")
-    godina = Column(Integer, default=1)  # godina studija (1/2/3)
+    godina = Column(Integer, default=1)
     redoslijed = Column(Integer, default=0)
 
     modules = relationship(
@@ -59,10 +45,6 @@ class Course(Base):
 
 
 class Module(Base):
-    """Podrucje unutar kolegija. Koristi se SAMO za Primijenjenu matematiku
-    (Teorija brojeva i kombinatorika, Vjerojatnost, Funkcije vise varijabli).
-    Obicni kolegiji nemaju module."""
-
     __tablename__ = "modules"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -74,11 +56,6 @@ class Module(Base):
 
 
 class TheoryItem(Base):
-    """Stavka teorije (flashcard, T/N, MCQ, nadopuni, ...).
-
-    Vjesa se na kolegij (module_id=NULL) ili na podrucje Primijenjene (module_id).
-    """
-
     __tablename__ = "theory_items"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -90,11 +67,6 @@ class TheoryItem(Base):
 
 
 class Problem(Base):
-    """Zadatak. tip: 'auto' (SymPy/broj provjera) ili 'self' (samoprocjena).
-
-    Vjesa se na kolegij (module_id=NULL) ili na podrucje Primijenjene (module_id).
-    """
-
     __tablename__ = "problems"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -125,9 +97,6 @@ class Hint(Base):
     problem = relationship("Problem", back_populates="hints")
 
 
-# ---------------------------------------------------------------------------
-# Pracenje napretka
-# ---------------------------------------------------------------------------
 class Progress(Base):
     __tablename__ = "progress"
     __table_args__ = (
@@ -136,7 +105,7 @@ class Progress(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    kind = Column(String, nullable=False)  # "theory" | "problem"
+    kind = Column(String, nullable=False)
     item_id = Column(Integer, nullable=False)
     status = Column(String, default="in_progress")
     broj_pokusaja = Column(Integer, default=0)

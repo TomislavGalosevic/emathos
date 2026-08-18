@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine
-from .routers import auth, courses
+from .routers import auth, courses, content
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="e-Mathos API", version="0.2.0")
+app = FastAPI(title="e-Mathos API", version="0.3.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,6 +18,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(courses.router)
+app.include_router(content.router)
 
 
 @app.get("/api/health")

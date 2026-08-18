@@ -3,9 +3,6 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, ConfigDict
 
 
-# ---------------------------------------------------------------------------
-# Auth / User
-# ---------------------------------------------------------------------------
 class UserCreate(BaseModel):
     username: str
     email: EmailStr
@@ -31,9 +28,6 @@ class LoginRequest(BaseModel):
     password: str
 
 
-# ---------------------------------------------------------------------------
-# Course / Module
-# ---------------------------------------------------------------------------
 class CourseBase(BaseModel):
     naziv: str
     opis: str = ""
@@ -65,7 +59,73 @@ class ModuleOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# Struktura kolegija: kolegij + eventualna podrucja (moduli).
-# Obican kolegij ima modules = []. Primijenjena ima 3 podrucja.
 class CourseStructure(CourseOut):
     modules: list[ModuleOut] = []
+
+
+# ---------------------------------------------------------------------------
+# Teorija / Zadaci
+# ---------------------------------------------------------------------------
+class HintBase(BaseModel):
+    sadrzaj: str
+    redoslijed: int = 0
+
+
+class HintOut(HintBase):
+    id: int
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ProblemBase(BaseModel):
+    tekst: str
+    tip: str = "auto"  # "auto" | "self"
+    tocan_odgovor: str = ""
+    rjesenje: str = ""
+    redoslijed: int = 0
+
+
+class ProblemCreate(ProblemBase):
+    course_id: int
+    module_id: Optional[int] = None
+    hints: list[str] = []
+
+
+class ProblemUpdate(BaseModel):
+    tekst: Optional[str] = None
+    tip: Optional[str] = None
+    tocan_odgovor: Optional[str] = None
+    rjesenje: Optional[str] = None
+    redoslijed: Optional[int] = None
+    hints: Optional[list[str]] = None
+
+
+class ProblemOut(ProblemBase):
+    id: int
+    course_id: int
+    module_id: Optional[int] = None
+    hints: list[HintOut] = []
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TheoryItemBase(BaseModel):
+    tip: str  # flashcard | truefalse | mcq | multi | fillin | match | order
+    sadrzaj: dict
+    redoslijed: int = 0
+
+
+class TheoryItemCreate(TheoryItemBase):
+    course_id: int
+    module_id: Optional[int] = None
+
+
+class TheoryItemUpdate(BaseModel):
+    tip: Optional[str] = None
+    sadrzaj: Optional[dict] = None
+    redoslijed: Optional[int] = None
+
+
+class TheoryItemOut(TheoryItemBase):
+    id: int
+    course_id: int
+    module_id: Optional[int] = None
+    model_config = ConfigDict(from_attributes=True)
