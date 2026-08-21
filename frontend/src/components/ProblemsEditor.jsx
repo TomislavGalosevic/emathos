@@ -37,9 +37,6 @@ export default function ProblemsEditor({ courseId, moduleId }) {
             <li key={p.id} className="content-item">
               <div className="content-item-main">
                 <MathText text={p.tekst} />
-                <span className={"badge " + (p.tip === "auto" ? "badge-auto" : "badge-self")}>
-                  {p.tip === "auto" ? "auto-provjera" : "samoprocjena"}
-                </span>
               </div>
               {p.hints.length > 0 && (
                 <div className="content-item-sub">
@@ -75,7 +72,6 @@ export default function ProblemsEditor({ courseId, moduleId }) {
 
 function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
   const [tekst, setTekst] = useState("");
-  const [tip, setTip] = useState("auto");
   const [tocanOdgovor, setTocanOdgovor] = useState("");
   const [rjesenje, setRjesenje] = useState("");
   const [hints, setHints] = useState([""]);
@@ -97,6 +93,10 @@ function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
       setError("Unesi tekst zadatka.");
       return;
     }
+    if (!tocanOdgovor.trim()) {
+      setError("Unesi točan odgovor.");
+      return;
+    }
     setSaving(true);
     setError("");
     try {
@@ -104,7 +104,7 @@ function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
         course_id: courseId,
         module_id: moduleId,
         tekst,
-        tip,
+        tip: "auto",
         tocan_odgovor: tocanOdgovor,
         rjesenje,
         hints: hints.map((h) => h.trim()).filter(Boolean),
@@ -122,22 +122,12 @@ function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
       <label>Tekst zadatka (LaTeX: $...$ za formule)</label>
       <MathInput value={tekst} onChange={setTekst} placeholder="npr. Izracunajte $\lim_{n\to\infty} \frac{2n+1}{n}$." rows={3} />
 
-      <label>Tip provjere</label>
-      <select value={tip} onChange={(e) => setTip(e.target.value)}>
-        <option value="auto">Auto-provjera (broj/izraz)</option>
-        <option value="self">Samoprocjena (npr. dokaz)</option>
-      </select>
-
-      {tip === "auto" && (
-        <>
-          <label>Točan odgovor</label>
-          <input
-            value={tocanOdgovor}
-            onChange={(e) => setTocanOdgovor(e.target.value)}
-            placeholder="npr. 2  ili  2x+3"
-          />
-        </>
-      )}
+      <label>Točan odgovor</label>
+      <input
+        value={tocanOdgovor}
+        onChange={(e) => setTocanOdgovor(e.target.value)}
+        placeholder="npr. 2  ili  2x+3  ili matrica [[1,0],[0,1]]"
+      />
 
       <label>Rješenje (prikazuje se na kraju)</label>
       <MathInput value={rjesenje} onChange={setRjesenje} placeholder="Puno rješenje s postupkom…" rows={3} />

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
-import ProblemsEditor from "../components/ProblemsEditor";
-import TheoryEditor from "../components/TheoryEditor";
+import StudyTheory from "../components/StudyTheory";
+import SolveProblems from "../components/SolveProblems";
 
 const YEARS = [
   { n: 1, rimski: "I", rijec: "Prva godina" },
@@ -10,20 +10,16 @@ const YEARS = [
   { n: 3, rimski: "III", rijec: "Treća godina" },
 ];
 
-export default function AdminCoursesPage() {
+export default function LearnPage() {
   const { user, logout } = useAuth();
   const [view, setView] = useState("years");
   const [year, setYear] = useState(null);
   const [courses, setCourses] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [newCourseName, setNewCourseName] = useState("");
   const [section, setSection] = useState(null);
 
-  async function loadCourses() {
-    setCourses(await api.listCourses());
-  }
   useEffect(() => {
-    loadCourses();
+    api.listCourses().then(setCourses);
   }, []);
 
   function openYear(y) {
@@ -33,20 +29,7 @@ export default function AdminCoursesPage() {
   async function openCourse(id) {
     setSelected(await api.courseTree(id));
     setSection(null);
-    setView("editor");
-  }
-
-  async function addCourse() {
-    if (!newCourseName.trim()) return;
-    await api.createCourse({ naziv: newCourseName, godina: year });
-    setNewCourseName("");
-    loadCourses();
-  }
-  async function removeCourse(id, naziv, e) {
-    e.stopPropagation();
-    if (!window.confirm(`Obrisati kolegij "${naziv}" sa svime unutra?`)) return;
-    await api.deleteCourse(id);
-    loadCourses();
+    setView("course");
   }
 
   const coursesInYear = courses.filter((c) => c.godina === year);
@@ -76,7 +59,7 @@ export default function AdminCoursesPage() {
       <main className="stage">
         {view === "years" && (
           <section className="fade">
-            <p className="eyebrow">Administracija sadržaja</p>
+            <p className="eyebrow">Učenje</p>
             <h1 className="title">Odaberi godinu studija</h1>
             <div className="hex-grid years">
               {YEARS.map((y, i) => (
@@ -108,35 +91,16 @@ export default function AdminCoursesPage() {
                       <span className="hex-title">{c.naziv}</span>
                     </span>
                   </button>
-                  <button
-                    className="del"
-                    title="Obriši kolegij"
-                    onClick={(e) => removeCourse(c.id, c.naziv, e)}
-                  >
-                    ✕
-                  </button>
                 </div>
               ))}
               {coursesInYear.length === 0 && (
-                <p className="empty">Nema kolegija u ovoj godini — dodaj prvi ispod.</p>
+                <p className="empty">Za ovu godinu još nema kolegija.</p>
               )}
-            </div>
-
-            <div className="add-row">
-              <input
-                placeholder="Naziv novog kolegija"
-                value={newCourseName}
-                onChange={(e) => setNewCourseName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && addCourse()}
-              />
-              <button className="solid" onClick={addCourse}>
-                Dodaj kolegij
-              </button>
             </div>
           </section>
         )}
 
-        {view === "editor" && selected && (
+        {view === "course" && selected && (
           <section className="fade">
             <button className="back" onClick={() => setView("subjects")}>
               ← {YEARS.find((y) => y.n === year)?.rijec}
@@ -149,18 +113,18 @@ export default function AdminCoursesPage() {
                 <div className="section-cards">
                   <SectionCard
                     label="Teorija"
-                    desc="Flash kartice, T/N, MCQ, nadopuni…"
+                    desc="Uči kroz kartice i pitanja"
                     active={section?.kind === "teorija" && section?.moduleId === area.id}
                     onClick={() =>
-                      setSection({ kind: "teorija", moduleId: area.id, moduleName: area.naziv })
+                      setSection({ kind: "teorija", moduleId: area.id })
                     }
                   />
                   <SectionCard
                     label="Zadaci"
-                    desc="Zadaci s hintovima i rješenjem"
+                    desc="Riješi zadatke uz hintove"
                     active={section?.kind === "zadaci" && section?.moduleId === area.id}
                     onClick={() =>
-                      setSection({ kind: "zadaci", moduleId: area.id, moduleName: area.naziv })
+                      setSection({ kind: "zadaci", moduleId: area.id })
                     }
                   />
                 </div>
@@ -169,18 +133,14 @@ export default function AdminCoursesPage() {
 
             {section && (
               <div className="section-detail">
-                <strong>
-                  {section.kind === "teorija" ? "Teorija" : "Zadaci"}
-                  {section.moduleName ? ` · ${section.moduleName}` : ""}
-                </strong>
                 {section.kind === "teorija" ? (
-                  <TheoryEditor
+                  <StudyTheory
                     key={`t-${selected.id}-${section.moduleId}`}
                     courseId={selected.id}
                     moduleId={section.moduleId}
                   />
                 ) : (
-                  <ProblemsEditor
+                  <SolveProblems
                     key={`p-${selected.id}-${section.moduleId}`}
                     courseId={selected.id}
                     moduleId={section.moduleId}

@@ -129,3 +129,23 @@ class TheoryItemOut(TheoryItemBase):
     course_id: int
     module_id: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+
+# ---------------------------------------------------------------------------
+# Rjesavanje zadataka
+# ---------------------------------------------------------------------------
+class AnswerCheckRequest(BaseModel):
+    odgovor: str
+
+
+class AnswerCheckResponse(BaseModel):
+    tocno: bool
+
+
+class ProgressOut(BaseModel):
+    kind: str
+    item_id: int
+    status: str
+    broj_pokusaja: int
+    model_config = ConfigDict(from_attributes=True)

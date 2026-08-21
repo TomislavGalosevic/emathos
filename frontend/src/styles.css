@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --bg: #eef2f9;          /* svijetlosiva pozadina */
+  --bg: #eef2f9;
   --surface: #ffffff;
-  --blue: #1c6ef2;        /* plava iz loga */
+  --blue: #1c6ef2;
   --blue-600: #155ed6;
-  --sky: #7db4ff;         /* svijetlo plava */
+  --sky: #7db4ff;
   --blue-50: #eaf2ff;
   --ink: #16233d;
   --muted: #6b7890;
@@ -15,14 +15,8 @@
 }
 
 * { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: "Inter", system-ui, sans-serif;
-  color: var(--ink);
-  background: var(--bg);
-}
+body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink); background: var(--bg); }
 
-/* ---------- Ambient page ---------- */
 .app { position: relative; min-height: 100vh; overflow: hidden;
   background:
     radial-gradient(1100px 560px at 82% -12%, rgba(125,180,255,.22), transparent 60%),
@@ -35,7 +29,6 @@ body {
 .glow-b { width: 340px; height: 340px; background: var(--blue); bottom: -110px; left: -60px; animation-delay: -8s; }
 @keyframes drift { 0%,100% { transform: translate(0,0); } 50% { transform: translate(26px,20px); } }
 
-/* ---------- Top bar ---------- */
 .topbar { position: relative; z-index: 2; display: flex; justify-content: space-between;
   align-items: center; padding: 1rem 1.6rem;
   background: rgba(255,255,255,.7); backdrop-filter: blur(8px);
@@ -46,7 +39,6 @@ body {
 .logo { width: 30px; height: 30px; object-fit: contain; }
 .who { display: flex; align-items: center; gap: .8rem; color: var(--muted); font-size: .9rem; }
 
-/* ---------- Stage / headings ---------- */
 .stage { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto;
   padding: 3rem 1.5rem 5rem; }
 .eyebrow { text-transform: uppercase; letter-spacing: 3px; font-size: .72rem;
@@ -57,19 +49,16 @@ body {
   font-size: .95rem; padding: 0; margin: 0 0 1rem; transition: color .2s; }
 .back:hover { color: var(--blue); }
 
-/* ---------- Hex grid ---------- */
 .hex-grid { display: flex; flex-wrap: wrap; gap: 1.4rem 1.2rem; }
 .hex-grid.years { gap: 1.8rem; }
 .hex-wrap { position: relative; }
 
-/* nizi / plosnatiji sesterokuti */
 .hex { width: 240px; height: 130px; border: none; padding: 2px; cursor: pointer;
   background: var(--edge); clip-path: var(--hex);
   transition: transform .26s ease, filter .26s ease;
   filter: drop-shadow(0 6px 14px rgba(28,110,242,.15)); }
 .hex.big { width: 240px; height: 150px; }
-.hex:hover { transform: translateY(-4px);
-  filter: drop-shadow(0 12px 24px rgba(28,110,242,.35)); }
+.hex:hover { transform: translateY(-4px); filter: drop-shadow(0 12px 24px rgba(28,110,242,.35)); }
 .hex:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 
 .hex-inner { width: 100%; height: 100%; clip-path: var(--hex);
@@ -79,13 +68,10 @@ body {
   transition: background .26s ease; }
 .hex:hover .hex-inner { background: var(--blue-50); }
 
-.hex-num { font-family: "Sora", sans-serif; font-weight: 800; font-size: 2.4rem; line-height: 1;
-  color: var(--blue); }
+.hex-num { font-family: "Sora", sans-serif; font-weight: 800; font-size: 2.4rem; line-height: 1; color: var(--blue); }
 .hex-label { font-family: "Sora", sans-serif; font-weight: 600; font-size: 1rem; color: var(--ink); }
-.hex-title { font-family: "Sora", sans-serif; font-weight: 600; font-size: .96rem;
-  line-height: 1.25; color: var(--ink); }
+.hex-title { font-family: "Sora", sans-serif; font-weight: 600; font-size: .96rem; line-height: 1.25; color: var(--ink); }
 
-/* delete button on subject cells */
 .del { position: absolute; top: 8px; right: 24px; z-index: 3;
   width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer;
   background: rgba(229,72,77,.12); color: #d93a3f; font-size: .8rem;
@@ -93,18 +79,75 @@ body {
 .hex-wrap:hover .del { opacity: 1; }
 .del:hover { background: rgba(229,72,77,.25); }
 
-/* ---------- Editor panels ---------- */
+/* ---------- Teorija / Zadaci sekcije ---------- */
+.area { margin-bottom: 2rem; }
+.area-title { font-family: "Sora", sans-serif; font-size: 1.15rem; color: var(--blue-600);
+  margin: 0 0 .8rem; padding-left: .1rem; }
+.section-cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 1rem; max-width: 640px; }
+.section-card { text-align: left; cursor: pointer; border: 1px solid var(--line);
+  background: var(--surface); border-radius: 14px; padding: 1.1rem 1.2rem;
+  display: flex; flex-direction: column; gap: .3rem;
+  box-shadow: 0 4px 14px rgba(28,110,242,.06);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.section-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(28,110,242,.18); border-color: var(--sky); }
+.section-card.active { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(28,110,242,.15); }
+.section-label { font-family: "Sora", sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink); }
+.section-desc { font-size: .84rem; color: var(--muted); }
+.section-detail { margin-top: 1rem; padding: 1rem 1.2rem; border-radius: 12px;
+  background: var(--blue-50); border: 1px dashed var(--sky); }
+.section-detail strong { color: var(--blue-600); display: block; margin-bottom: .8rem; }
+
+@media (max-width: 520px) { .section-cards { grid-template-columns: 1fr; } }
+
+/* ---------- Editor: popis Teorije/Zadataka ---------- */
+.editor { display: flex; flex-direction: column; gap: 1rem; }
+.content-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .6rem; }
+.content-item { position: relative; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 10px; padding: .7rem 2.2rem .7rem .9rem; }
+.content-item-main { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; font-size: .95rem; }
+.content-item-sub { margin-top: .3rem; font-size: .85rem; color: var(--muted); }
+.badge { font-size: .7rem; padding: .15rem .5rem; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+.badge-auto { background: #e6f6ec; color: #1f9254; }
+.badge-self { background: #fff2e0; color: #b5710a; }
+.badge-theory { background: var(--blue-50); color: var(--blue-600); }
+.content-item .del-mod { position: absolute; top: 8px; right: 8px; }
+
+/* ---------- Novi zapis: forma ---------- */
+.new-form { background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 1rem 1.1rem; display: flex; flex-direction: column; }
+.new-form label { margin-top: .8rem; }
+.new-form label:first-child { margin-top: 0; }
+.new-form select { background: #fff; border: 1px solid var(--line); border-radius: 9px;
+  padding: .55rem .7rem; font-size: .92rem; color: var(--ink); }
+.hint-row { display: flex; gap: .5rem; margin-top: .4rem; }
+.hint-row input { flex: 1; }
+.form-actions { display: flex; gap: .6rem; margin-top: 1.1rem; }
+
+/* ---------- MathText / MathInput (KaTeX) ---------- */
+.math-inline { display: inline-block; }
+.math-block { display: block; margin: .3rem 0; }
+.math-input textarea { width: 100%; resize: vertical; font-family: inherit; font-size: .95rem;
+  background: #fff; border: 1px solid var(--line); border-radius: 9px; padding: .6rem .8rem;
+  color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
+.math-input textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(28,110,242,.15); }
+.math-preview { margin-top: .4rem; padding: .55rem .75rem; border-radius: 9px;
+  background: var(--blue-50); border: 1px dashed var(--sky); font-size: .95rem; }
+.math-preview-label { display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--blue-600); margin-bottom: .25rem; }
+
+/* ---------- Panels (legacy - jos koristeno negdje) ---------- */
 .panels { display: grid; gap: 1rem; }
 .panel { position: relative; border-radius: 14px; padding: 1.1rem 1.2rem;
   background: var(--surface); border: 1px solid var(--line);
   box-shadow: 0 4px 14px rgba(28,110,242,.06); }
 .panel::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px;
   border-radius: 3px; background: var(--edge); }
+.panel-head { display: flex; justify-content: space-between; align-items: flex-start; }
 .panel-title { font-family: "Sora", sans-serif; margin: 0 0 .6rem; font-size: 1.05rem; color: var(--ink); }
-.topics { list-style: none; padding: 0; margin: 0 0 .8rem; }
-.topics li { padding: .35rem .6rem; border-radius: 8px; font-size: .92rem;
-  background: var(--blue-50); margin-bottom: .3rem; }
-.topics li.muted { background: none; color: var(--muted); font-style: italic; }
+.del-mod { background: none; border: none; cursor: pointer; color: #c2c9d6;
+  font-size: .85rem; padding: .1rem .3rem; border-radius: 6px; transition: color .2s, background .2s; }
+.del-mod:hover { color: #d93a3f; background: rgba(229,72,77,.12); }
 
 /* ---------- Inputs & buttons ---------- */
 input { background: #fff; border: 1px solid var(--line);
@@ -119,18 +162,21 @@ button.solid { border: none; cursor: pointer; border-radius: 9px; color: #fff;
   transition: filter .2s, transform .1s; }
 button.solid:hover { filter: brightness(1.06); }
 button.solid:active { transform: translateY(1px); }
+button.solid:disabled { opacity: .6; cursor: default; }
 button.ghost { background: none; border: 1px solid var(--line); color: var(--muted);
-  border-radius: 8px; padding: .35rem .7rem; cursor: pointer; font-size: .85rem;
+  border-radius: 8px; padding: .45rem .8rem; cursor: pointer; font-size: .85rem;
   transition: border-color .2s, color .2s; }
 button.ghost:hover { border-color: var(--blue); color: var(--blue); }
 
 .add-row { display: flex; gap: .6rem; margin-top: 1.6rem; flex-wrap: wrap; }
 .add-row input { flex: 1; min-width: 200px; }
-.add-inline { display: flex; gap: .5rem; }
-.add-inline input { flex: 1; }
 .empty { color: var(--muted); }
 
 /* ---------- Login ---------- */
+.login-wrap { max-width: 360px; margin: 4rem auto; padding: 0 1rem; }
+.back-link { display: inline-block; margin-bottom: 1rem; color: var(--muted);
+  text-decoration: none; font-size: .9rem; transition: color .2s; }
+.back-link:hover { color: var(--blue); }
 .card { background: var(--surface); border: 1px solid var(--line);
   border-radius: 16px; padding: 1.6rem; box-shadow: 0 8px 30px rgba(28,110,242,.08); }
 .card h2 { font-family: "Sora", sans-serif; margin-top: 0; color: var(--ink); }
@@ -141,6 +187,17 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
   background: linear-gradient(135deg, var(--blue), var(--blue-600)); }
 .error { color: #d93a3f; font-size: .85rem; }
 .hint { color: var(--muted); font-size: .82rem; }
+.info { color: var(--blue-600); font-size: .85rem; background: var(--blue-50);
+  border: 1px solid var(--sky); border-radius: 8px; padding: .5rem .7rem; }
+
+/* ---------- Pocetna (hero) ---------- */
+.hero { position: relative; z-index: 1; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 2rem; }
+.hero-logo { width: 84px; height: 84px; object-fit: contain; margin-bottom: .6rem; }
+.hero-title { font-family: "Sora", sans-serif; font-weight: 800;
+  font-size: clamp(2.2rem, 6vw, 3.4rem); color: var(--ink); margin: .2rem 0 1.4rem; }
+.big-btn { font-size: 1rem; padding: .7rem 1.7rem; }
 
 /* ---------- Motion in ---------- */
 .fade { animation: fade .4s ease both; }
@@ -153,38 +210,63 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
   .hex, .hex-inner, button, input { transition: none; }
 }
 
-/* brisanje modula */
-.panel-head { display: flex; justify-content: space-between; align-items: flex-start; }
-.del-mod { background: none; border: none; cursor: pointer; color: #c2c9d6;
-  font-size: .85rem; padding: .1rem .3rem; border-radius: 6px; transition: color .2s, background .2s; }
-.del-mod:hover { color: #d93a3f; background: rgba(229,72,77,.12); }
+/* ---------- Ucenje: study layout, flashcard 3D flip, T/N, MCQ, fillin ---------- */
+.study { max-width: 640px; margin: 0 auto; }
+.study-progress { font-size: .82rem; color: var(--muted); margin-bottom: .8rem; text-align: center; }
+.study-nav { display: flex; justify-content: space-between; margin-top: 1rem; }
 
-/* ---------- Teorija / Zadaci sekcije ---------- */
-.area { margin-bottom: 2rem; }
-.area-title { font-family: "Sora", sans-serif; font-size: 1.15rem; color: var(--blue-600);
-  margin: 0 0 .8rem; padding-left: .1rem; }
-.section-cards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: 1rem; max-width: 640px; }
-.section-card { text-align: left; cursor: pointer; border: 1px solid var(--line);
-  background: var(--surface); border-radius: 14px; padding: 1.1rem 1.2rem;
-  display: flex; flex-direction: column; gap: .3rem;
-  box-shadow: 0 4px 14px rgba(28,110,242,.06);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-.section-card:hover { transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(28,110,242,.18); border-color: var(--sky); }
-.section-card.active { border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(28,110,242,.15); }
-.section-label { font-family: "Sora", sans-serif; font-weight: 700; font-size: 1.1rem;
-  color: var(--ink); }
-.section-desc { font-size: .84rem; color: var(--muted); }
-.section-detail { margin-top: 1rem; padding: 1rem 1.2rem; border-radius: 12px;
-  background: var(--blue-50); border: 1px dashed var(--sky); }
-.section-detail strong { color: var(--blue-600); }
+.study-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  padding: 1.4rem; box-shadow: 0 4px 14px rgba(28,110,242,.06); }
+.study-prompt { font-size: 1.05rem; margin: 0 0 1rem; }
 
-@media (max-width: 520px) {
-  .section-cards { grid-template-columns: 1fr; }
-}
+/* Flashcard: prava 3D rotacija oko X osi */
+.flashcard-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.flashcard-scene { width: 100%; min-height: 160px; perspective: 1400px; cursor: pointer; }
+.flashcard-3d { position: relative; width: 100%; height: 160px;
+  transform-style: preserve-3d; transition: transform .55s cubic-bezier(.4,.2,.2,1); }
+.flashcard-3d.is-flipped { transform: rotateX(180deg); }
+.flashcard-face { position: absolute; inset: 0; backface-visibility: hidden;
+  border: 2px solid var(--blue); border-radius: 16px;
+  background: var(--surface);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: .5rem; padding: 1.2rem; }
+.flashcard-back { transform: rotateX(180deg); border-color: var(--sky); background: var(--blue-50); }
+.flashcard-hint { font-size: .78rem; color: var(--muted); }
 
-/* info poruka (npr. odjava zbog neaktivnosti) */
-.info { color: var(--blue-600); font-size: .85rem; background: var(--blue-50);
-  border: 1px solid var(--sky); border-radius: 8px; padding: .5rem .7rem; }
+.tf-buttons { display: flex; gap: .8rem; margin-bottom: 1rem; }
+.tf-btn { flex: 1; padding: .8rem; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); cursor: pointer; font-weight: 600; font-size: .95rem;
+  transition: border-color .2s, background .2s; }
+.tf-btn:hover:not(:disabled) { border-color: var(--blue); }
+.tf-btn:disabled { cursor: default; }
+.tf-correct { background: #e6f6ec; border-color: #1f9254; color: #1f9254; }
+.tf-wrong { background: #fdecea; border-color: #d93a3f; color: #d93a3f; }
+
+.mcq-options { display: flex; flex-direction: column; gap: .55rem; margin-bottom: 1rem; }
+.mcq-opt { text-align: left; padding: .7rem .9rem; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--surface); cursor: pointer; font-size: .95rem; transition: border-color .2s, background .2s; }
+.mcq-opt:hover:not(:disabled) { border-color: var(--blue); }
+.mcq-opt:disabled { cursor: default; }
+.mcq-correct { background: #e6f6ec; border-color: #1f9254; }
+.mcq-wrong { background: #fdecea; border-color: #d93a3f; }
+
+.fillin-prompt { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; }
+.fillin-input { width: 110px; display: inline-block; text-align: center; }
+
+.feedback { font-weight: 600; margin: .3rem 0 1rem; }
+.feedback-ok { color: #1f9254; }
+.feedback-bad { color: #d93a3f; }
+
+.solve-row { display: flex; gap: .6rem; margin-bottom: .6rem; }
+.solve-row input { flex: 1; }
+.hints-block { margin: .8rem 0; display: flex; flex-direction: column; gap: .4rem; }
+.hint-reveal { background: var(--blue-50); border-radius: 8px; padding: .5rem .7rem; margin: 0; font-size: .92rem; }
+.solution-block { margin-top: .8rem; }
+.solution-text { background: #eafff1; border: 1px dashed #8fd8ab; border-radius: 10px;
+  padding: .7rem .9rem; font-size: .92rem; }
+
+.arrow { color: var(--blue); }
+.hint-inline { color: var(--muted); font-style: normal; font-size: .85rem; }
+
+/* ---------- Hero actions (dva gumba) ---------- */
+.hero-actions { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; }

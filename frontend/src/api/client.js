@@ -30,17 +30,41 @@ async function request(path, { method = "GET", body, form, auth = true } = {}) {
   return res.json();
 }
 
+function qs(params) {
+  const usp = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== null && v !== undefined) usp.set(k, v);
+  });
+  const s = usp.toString();
+  return s ? `?${s}` : "";
+}
+
 export const api = {
-  // auth
   login: (username, password) =>
     request("/api/auth/login", { method: "POST", form: { username, password }, auth: false }),
   register: (username, email, password) =>
     request("/api/auth/register", { method: "POST", body: { username, email, password }, auth: false }),
   me: () => request("/api/auth/me"),
 
-  // courses
   listCourses: () => request("/api/courses", { auth: false }),
   courseTree: (id) => request(`/api/courses/${id}/tree`, { auth: false }),
   createCourse: (data) => request("/api/courses", { method: "POST", body: data }),
   deleteCourse: (id) => request(`/api/courses/${id}`, { method: "DELETE" }),
+
+  listProblems: (courseId, moduleId) =>
+    request(`/api/problems${qs({ course_id: courseId, module_id: moduleId })}`, { auth: false }),
+  createProblem: (data) => request("/api/problems", { method: "POST", body: data }),
+  updateProblem: (id, data) => request(`/api/problems/${id}`, { method: "PATCH", body: data }),
+  deleteProblem: (id) => request(`/api/problems/${id}`, { method: "DELETE" }),
+  checkProblem: (id, odgovor) =>
+    request(`/api/problems/${id}/check`, { method: "POST", body: { odgovor } }),
+
+  listTheory: (courseId, moduleId) =>
+    request(`/api/theory${qs({ course_id: courseId, module_id: moduleId })}`, { auth: false }),
+  createTheory: (data) => request("/api/theory", { method: "POST", body: data }),
+  updateTheory: (id, data) => request(`/api/theory/${id}`, { method: "PATCH", body: data }),
+  deleteTheory: (id) => request(`/api/theory/${id}`, { method: "DELETE" }),
+  markTheorySeen: (id) => request(`/api/theory/${id}/mark`, { method: "POST" }),
+
+  myProgress: (kind) => request(`/api/progress${qs({ kind })}`),
 };
