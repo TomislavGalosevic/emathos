@@ -149,3 +149,26 @@ class ProgressOut(BaseModel):
     status: str
     broj_pokusaja: int
     model_config = ConfigDict(from_attributes=True)
+
+
+
+# ---------------------------------------------------------------------------
+# Agregirani napredak po kolegiju (za prikaz korisniku)
+# ---------------------------------------------------------------------------
+class AreaProgress(BaseModel):
+    module_id: Optional[int] = None
+    naziv: Optional[str] = None
+    teorija_ukupno: int
+    teorija_rijeseno: int
+    zadaci_ukupno: int
+    zadaci_rijeseno: int
+
+
+class CourseProgressOut(BaseModel):
+    course_id: int
+    areas: list[AreaProgress]
+
+
+
+class TheoryMarkRequest(BaseModel):
+    tocno: bool = True  # False = "ne znam jos" / netocan odgovor -> ne oznacava se kao svladano

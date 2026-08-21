@@ -204,10 +204,13 @@ def delete_theory(
 @router.post("/theory/{item_id}/mark", response_model=schemas.ProgressOut)
 def mark_theory_seen(
     item_id: int,
+    data: schemas.TheoryMarkRequest = schemas.TheoryMarkRequest(),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    """Oznaci da je korisnik svladao stavku teorije."""
+    """Biljezi pokusaj stavke teorije. Oznacava se 'solved' SAMO ako je tocno
+    (za T/N, MCQ, nadopuni) ili ako se korisnik sam procijeni da zna (flashcard).
+    Netocan/negativan odgovor ne oduzima vec postignuti status 'solved'."""
     item = db.get(models.TheoryItem, item_id)
     if not item:
         raise HTTPException(status_code=404, detail="Stavka teorije ne postoji")
@@ -227,7 +230,8 @@ def mark_theory_seen(
         )
         db.add(progress)
     progress.broj_pokusaja += 1
-    progress.status = "solved"
+    if data.tocno:
+        progress.status = "solved"
     db.commit()
     db.refresh(progress)
     return progress
@@ -247,3 +251,70 @@ def my_progress(
     if kind:
         q = q.filter(models.Progress.kind == kind)
     return q.all()
+
+
+@router.get("/courses/{course_id}/progress", response_model=schemas.CourseProgressOut)
+def course_progress(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Agregirani napredak trenutnog korisnika za sva podrucja kolegija.
+
+    Ako kolegij nema podrucja, vraca jedan zapis s module_id=None.
+    """
+    course = db.get(models.Course, course_id)
+    if not course:
+        raise HTTPException(status_code=404, detail="Kolegij ne postoji")
+
+    modules = (
+        db.query(models.Module)
+        .filter(models.Module.course_id == course_id)
+        .order_by(models.Module.redoslijed)
+        .all()
+    )
+    area_keys = [(m.id, m.naziv) for m in modules] if modules else [(None, None)]
+
+    theory_items = db.query(models.TheoryItem).filter(models.TheoryItem.course_id == course_id).all()
+    problems = db.query(models.Problem).filter(models.Problem.course_id == course_id).all()
+
+    theory_ids_by_module = {}
+    for t in theory_items:
+        theory_ids_by_module.setdefault(t.module_id, []).append(t.id)
+    problem_ids_by_module = {}
+    for p in problems:
+        problem_ids_by_module.setdefault(p.module_id, []).append(p.id)
+
+    solved_theory_ids = {
+        row.item_id
+        for row in db.query(models.Progress).filter(
+            models.Progress.user_id == current_user.id,
+            models.Progress.kind == "theory",
+            models.Progress.status == "solved",
+        )
+    }
+    solved_problem_ids = {
+        row.item_id
+        for row in db.query(models.Progress).filter(
+            models.Progress.user_id == current_user.id,
+            models.Progress.kind == "problem",
+            models.Progress.status == "solved",
+        )
+    }
+
+    areas = []
+    for module_id, naziv in area_keys:
+        t_ids = theory_ids_by_module.get(module_id, [])
+        p_ids = problem_ids_by_module.get(module_id, [])
+        areas.append(
+            schemas.AreaProgress(
+                module_id=module_id,
+                naziv=naziv,
+                teorija_ukupno=len(t_ids),
+                teorija_rijeseno=sum(1 for i in t_ids if i in solved_theory_ids),
+                zadaci_ukupno=len(p_ids),
+                zadaci_rijeseno=sum(1 for i in p_ids if i in solved_problem_ids),
+            )
+        )
+
+    return schemas.CourseProgressOut(course_id=course_id, areas=areas)

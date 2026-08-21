@@ -64,7 +64,9 @@ export const api = {
   createTheory: (data) => request("/api/theory", { method: "POST", body: data }),
   updateTheory: (id, data) => request(`/api/theory/${id}`, { method: "PATCH", body: data }),
   deleteTheory: (id) => request(`/api/theory/${id}`, { method: "DELETE" }),
-  markTheorySeen: (id) => request(`/api/theory/${id}/mark`, { method: "POST" }),
+  markTheorySeen: (id, tocno = true) =>
+    request(`/api/theory/${id}/mark`, { method: "POST", body: { tocno } }),
 
   myProgress: (kind) => request(`/api/progress${qs({ kind })}`),
+  courseProgress: (courseId) => request(`/api/courses/${courseId}/progress`),
 };

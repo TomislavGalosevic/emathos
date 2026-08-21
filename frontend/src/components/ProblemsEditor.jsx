@@ -6,7 +6,7 @@ import MathInput from "./MathInput";
 export default function ProblemsEditor({ courseId, moduleId }) {
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState(null); // null | "new" | problem-id-being-edited
 
   async function load() {
     setLoading(true);
@@ -15,7 +15,7 @@ export default function ProblemsEditor({ courseId, moduleId }) {
   }
   useEffect(() => {
     load();
-    setOpen(false);
+    setMode(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, moduleId]);
 
@@ -24,6 +24,8 @@ export default function ProblemsEditor({ courseId, moduleId }) {
     await api.deleteProblem(id);
     load();
   }
+
+  const editing = mode && mode !== "new" ? problems.find((p) => p.id === mode) : null;
 
   return (
     <div className="editor">
@@ -43,38 +45,61 @@ export default function ProblemsEditor({ courseId, moduleId }) {
                   {p.hints.length} hint{p.hints.length > 1 ? "ova" : ""}
                 </div>
               )}
-              <button className="del-mod" onClick={() => remove(p.id)} title="Obriši">
-                ✕
-              </button>
+              <div className="item-actions">
+                <button className="edit-mod" onClick={() => setMode(p.id)} title="Uredi">
+                  ✎
+                </button>
+                <button className="del-mod" onClick={() => remove(p.id)} title="Obriši">
+                  ✕
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       )}
 
-      {!open ? (
-        <button className="solid" onClick={() => setOpen(true)}>
+      {mode === null && (
+        <button className="solid" onClick={() => setMode("new")}>
           + Novi zadatak
         </button>
-      ) : (
-        <NewProblemForm
+      )}
+
+      {mode === "new" && (
+        <ProblemForm
           courseId={courseId}
           moduleId={moduleId}
           onSaved={() => {
-            setOpen(false);
+            setMode(null);
             load();
           }}
-          onCancel={() => setOpen(false)}
+          onCancel={() => setMode(null)}
+        />
+      )}
+
+      {editing && (
+        <ProblemForm
+          courseId={courseId}
+          moduleId={moduleId}
+          existing={editing}
+          onSaved={() => {
+            setMode(null);
+            load();
+          }}
+          onCancel={() => setMode(null)}
         />
       )}
     </div>
   );
 }
 
-function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
-  const [tekst, setTekst] = useState("");
-  const [tocanOdgovor, setTocanOdgovor] = useState("");
-  const [rjesenje, setRjesenje] = useState("");
-  const [hints, setHints] = useState([""]);
+function ProblemForm({ courseId, moduleId, existing, onSaved, onCancel }) {
+  const isEdit = !!existing;
+  const [tekst, setTekst] = useState(existing?.tekst || "");
+  const [tocanOdgovor, setTocanOdgovor] = useState(existing?.tocan_odgovor || "");
+  const [rjesenje, setRjesenje] = useState(existing?.rjesenje || "");
+  const [hints, setHints] = useState(
+    existing?.hints?.length ? existing.hints.map((h) => h.sadrzaj) : [""]
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -100,15 +125,18 @@ function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
     setSaving(true);
     setError("");
     try {
-      await api.createProblem({
-        course_id: courseId,
-        module_id: moduleId,
+      const payload = {
         tekst,
         tip: "auto",
         tocan_odgovor: tocanOdgovor,
         rjesenje,
         hints: hints.map((h) => h.trim()).filter(Boolean),
-      });
+      };
+      if (isEdit) {
+        await api.updateProblem(existing.id, payload);
+      } else {
+        await api.createProblem({ course_id: courseId, module_id: moduleId, ...payload });
+      }
       onSaved();
     } catch (e) {
       setError(e.message);
@@ -119,6 +147,8 @@ function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
 
   return (
     <div className="new-form">
+      {isEdit && <p className="edit-label">Uređivanje zadatka</p>}
+
       <label>Tekst zadatka (LaTeX: $...$ za formule)</label>
       <MathInput value={tekst} onChange={setTekst} placeholder="npr. Izracunajte $\lim_{n\to\infty} \frac{2n+1}{n}$." rows={3} />
 
@@ -154,7 +184,7 @@ function NewProblemForm({ courseId, moduleId, onSaved, onCancel }) {
       {error && <p className="error">{error}</p>}
       <div className="form-actions">
         <button className="solid" onClick={save} disabled={saving}>
-          {saving ? "Spremanje…" : "Spremi zadatak"}
+          {saving ? "Spremanje…" : isEdit ? "Spremi izmjene" : "Spremi zadatak"}
         </button>
         <button className="ghost" onClick={onCancel}>
           Odustani

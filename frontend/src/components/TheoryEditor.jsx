@@ -13,7 +13,7 @@ const TYPE_LABELS = {
 export default function TheoryEditor({ courseId, moduleId }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState(null); // null | "new" | item-id-being-edited
 
   async function load() {
     setLoading(true);
@@ -22,7 +22,7 @@ export default function TheoryEditor({ courseId, moduleId }) {
   }
   useEffect(() => {
     load();
-    setOpen(false);
+    setMode(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, moduleId]);
 
@@ -31,6 +31,8 @@ export default function TheoryEditor({ courseId, moduleId }) {
     await api.deleteTheory(id);
     load();
   }
+
+  const editing = mode && mode !== "new" ? items.find((it) => it.id === mode) : null;
 
   return (
     <div className="editor">
@@ -46,27 +48,47 @@ export default function TheoryEditor({ courseId, moduleId }) {
                 <TheoryPreview item={it} />
                 <span className="badge badge-theory">{TYPE_LABELS[it.tip] || it.tip}</span>
               </div>
-              <button className="del-mod" onClick={() => remove(it.id)} title="Obriši">
-                ✕
-              </button>
+              <div className="item-actions">
+                <button className="edit-mod" onClick={() => setMode(it.id)} title="Uredi">
+                  ✎
+                </button>
+                <button className="del-mod" onClick={() => remove(it.id)} title="Obriši">
+                  ✕
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       )}
 
-      {!open ? (
-        <button className="solid" onClick={() => setOpen(true)}>
+      {mode === null && (
+        <button className="solid" onClick={() => setMode("new")}>
           + Nova stavka teorije
         </button>
-      ) : (
-        <NewTheoryForm
+      )}
+
+      {mode === "new" && (
+        <TheoryForm
           courseId={courseId}
           moduleId={moduleId}
           onSaved={() => {
-            setOpen(false);
+            setMode(null);
             load();
           }}
-          onCancel={() => setOpen(false)}
+          onCancel={() => setMode(null)}
+        />
+      )}
+
+      {editing && (
+        <TheoryForm
+          courseId={courseId}
+          moduleId={moduleId}
+          existing={editing}
+          onSaved={() => {
+            setMode(null);
+            load();
+          }}
+          onCancel={() => setMode(null)}
         />
       )}
     </div>
@@ -103,24 +125,27 @@ function TheoryPreview({ item }) {
   return <span>{JSON.stringify(s)}</span>;
 }
 
-function NewTheoryForm({ courseId, moduleId, onSaved, onCancel }) {
-  const [tip, setTip] = useState("flashcard");
+function TheoryForm({ courseId, moduleId, existing, onSaved, onCancel }) {
+  const isEdit = !!existing;
+  const [tip, setTip] = useState(existing?.tip || "flashcard");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const s = existing?.sadrzaj || {};
+
   // flashcard
-  const [pitanje, setPitanje] = useState("");
-  const [odgovor, setOdgovor] = useState("");
+  const [pitanje, setPitanje] = useState(s.pitanje && existing?.tip === "flashcard" ? s.pitanje : "");
+  const [odgovor, setOdgovor] = useState(s.odgovor && existing?.tip === "flashcard" ? s.odgovor : "");
   // truefalse
-  const [tvrdnja, setTvrdnja] = useState("");
-  const [tocno, setTocno] = useState(true);
+  const [tvrdnja, setTvrdnja] = useState(existing?.tip === "truefalse" ? s.tvrdnja || "" : "");
+  const [tocno, setTocno] = useState(existing?.tip === "truefalse" ? !!s.tocno : true);
   // mcq
-  const [mcqPitanje, setMcqPitanje] = useState("");
-  const [opcije, setOpcije] = useState(["", ""]);
-  const [tocnaIdx, setTocnaIdx] = useState(0);
+  const [mcqPitanje, setMcqPitanje] = useState(existing?.tip === "mcq" ? s.pitanje || "" : "");
+  const [opcije, setOpcije] = useState(existing?.tip === "mcq" && s.opcije?.length ? s.opcije : ["", ""]);
+  const [tocnaIdx, setTocnaIdx] = useState(existing?.tip === "mcq" ? s.tocna || 0 : 0);
   // fillin
-  const [fillinTekst, setFillinTekst] = useState("");
-  const [fillinOdgovor, setFillinOdgovor] = useState("");
+  const [fillinTekst, setFillinTekst] = useState(existing?.tip === "fillin" ? s.tekst || "" : "");
+  const [fillinOdgovor, setFillinOdgovor] = useState(existing?.tip === "fillin" ? s.odgovor || "" : "");
 
   function setOpcija(i, val) {
     setOpcije((o) => o.map((x, idx) => (idx === i ? val : x)));
@@ -170,7 +195,11 @@ function NewTheoryForm({ courseId, moduleId, onSaved, onCancel }) {
 
     setSaving(true);
     try {
-      await api.createTheory({ course_id: courseId, module_id: moduleId, tip, sadrzaj });
+      if (isEdit) {
+        await api.updateTheory(existing.id, { tip, sadrzaj });
+      } else {
+        await api.createTheory({ course_id: courseId, module_id: moduleId, tip, sadrzaj });
+      }
       onSaved();
     } catch (e) {
       setError(e.message);
@@ -181,13 +210,16 @@ function NewTheoryForm({ courseId, moduleId, onSaved, onCancel }) {
 
   return (
     <div className="new-form">
+      {isEdit && <p className="edit-label">Uređivanje stavke</p>}
+
       <label>Tip stavke</label>
-      <select value={tip} onChange={(e) => setTip(e.target.value)}>
+      <select value={tip} onChange={(e) => setTip(e.target.value)} disabled={isEdit}>
         <option value="flashcard">Flash kartica</option>
         <option value="truefalse">Točno / netočno</option>
         <option value="mcq">Višestruki izbor</option>
         <option value="fillin">Nadopuni rečenicu</option>
       </select>
+      {isEdit && <p className="hint" style={{ marginTop: ".3rem" }}>Tip se ne može mijenjati — obriši i dodaj novu ako trebaš drugi tip.</p>}
 
       {tip === "flashcard" && (
         <>
@@ -255,7 +287,7 @@ function NewTheoryForm({ courseId, moduleId, onSaved, onCancel }) {
       {error && <p className="error">{error}</p>}
       <div className="form-actions">
         <button className="solid" onClick={save} disabled={saving}>
-          {saving ? "Spremanje…" : "Spremi"}
+          {saving ? "Spremanje…" : isEdit ? "Spremi izmjene" : "Spremi"}
         </button>
         <button className="ghost" onClick={onCancel}>
           Odustani

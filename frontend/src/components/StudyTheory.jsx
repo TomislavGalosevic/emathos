@@ -4,36 +4,74 @@ import MathText from "./MathText";
 
 export default function StudyTheory({ courseId, moduleId }) {
   const [items, setItems] = useState([]);
+  const [solvedIds, setSolvedIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [idx, setIdx] = useState(0);
+  const [hideSolved, setHideSolved] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     setIdx(0);
-    api.listTheory(courseId, moduleId).then((d) => {
-      setItems(d);
-      setLoading(false);
-    });
+    Promise.all([api.listTheory(courseId, moduleId), api.myProgress("theory")]).then(
+      ([theoryItems, progress]) => {
+        setItems(theoryItems);
+        setSolvedIds(new Set(progress.filter((p) => p.status === "solved").map((p) => p.item_id)));
+        setLoading(false);
+      }
+    );
   }, [courseId, moduleId]);
+
+  function markSolved(itemId, tocno) {
+    api.markTheorySeen(itemId, tocno).catch(() => {});
+    if (tocno) {
+      setSolvedIds((prev) => new Set(prev).add(itemId));
+    }
+  }
 
   if (loading) return <p className="empty">Učitavanje…</p>;
   if (items.length === 0) return <p className="empty">Za ovo područje još nema teorije.</p>;
 
-  const item = items[idx];
+  const visible = hideSolved ? items.filter((it) => !solvedIds.has(it.id)) : items;
+
+  if (visible.length === 0) {
+    return (
+      <div className="study">
+        <p className="empty">Sve stavke su svladane. 🎉</p>
+        <label className="hide-toggle">
+          <input type="checkbox" checked={hideSolved} onChange={(e) => setHideSolved(e.target.checked)} />
+          Sakrij riješeno
+        </label>
+      </div>
+    );
+  }
+
+  const safeIdx = idx % visible.length;
+  const item = visible[safeIdx];
 
   function next() {
-    setIdx((i) => (i + 1) % items.length);
+    setIdx((i) => (i + 1) % visible.length);
   }
   function prev() {
-    setIdx((i) => (i - 1 + items.length) % items.length);
+    setIdx((i) => (i - 1 + visible.length) % visible.length);
   }
 
   return (
     <div className="study">
       <div className="study-progress">
-        {idx + 1} / {items.length}
+        {safeIdx + 1} / {visible.length}
+        <label className="hide-toggle">
+          <input
+            type="checkbox"
+            checked={hideSolved}
+            onChange={(e) => {
+              setHideSolved(e.target.checked);
+              setIdx(0);
+            }}
+          />
+          Sakrij riješeno
+        </label>
       </div>
-      <StudyItem key={item.id} item={item} onDone={next} />
+      <StudyItem key={item.id} item={item} solved={solvedIds.has(item.id)} onMark={markSolved} onDone={next} />
       <div className="study-nav">
         <button className="ghost" onClick={prev}>
           ← Prethodno
@@ -46,22 +84,23 @@ export default function StudyTheory({ courseId, moduleId }) {
   );
 }
 
-function StudyItem({ item, onDone }) {
-  if (item.tip === "flashcard") return <FlashcardItem item={item} onDone={onDone} />;
-  if (item.tip === "truefalse") return <TrueFalseItem item={item} onDone={onDone} />;
-  if (item.tip === "mcq") return <McqItem item={item} onDone={onDone} />;
-  if (item.tip === "fillin") return <FillinItem item={item} onDone={onDone} />;
+function SolvedBadge() {
+  return <span className="solved-badge">✓ Riješeno</span>;
+}
+
+function StudyItem({ item, solved, onMark, onDone }) {
+  if (item.tip === "flashcard") return <FlashcardItem item={item} solved={solved} onMark={onMark} onDone={onDone} />;
+  if (item.tip === "truefalse") return <TrueFalseItem item={item} solved={solved} onMark={onMark} onDone={onDone} />;
+  if (item.tip === "mcq") return <McqItem item={item} solved={solved} onMark={onMark} onDone={onDone} />;
+  if (item.tip === "fillin") return <FillinItem item={item} solved={solved} onMark={onMark} onDone={onDone} />;
   return null;
 }
 
-function mark(itemId) {
-  api.markTheorySeen(itemId).catch(() => {});
-}
-
-function FlashcardItem({ item, onDone }) {
+function FlashcardItem({ item, solved, onMark, onDone }) {
   const [flipped, setFlipped] = useState(false);
   return (
     <div className="study-card flashcard-wrap">
+      {solved && <SolvedBadge />}
       <div className="flashcard-scene" onClick={() => setFlipped((f) => !f)}>
         <div className={"flashcard-3d" + (flipped ? " is-flipped" : "")}>
           <div className="flashcard-face flashcard-front">
@@ -74,31 +113,43 @@ function FlashcardItem({ item, onDone }) {
         </div>
       </div>
       {flipped && (
-        <button
-          className="solid"
-          onClick={() => {
-            mark(item.id);
-            onDone();
-          }}
-        >
-          Dalje
-        </button>
+        <div className="self-assess">
+          <button
+            className="ghost"
+            onClick={() => {
+              onMark(item.id, false);
+              onDone();
+            }}
+          >
+            Ne znam još
+          </button>
+          <button
+            className="solid"
+            onClick={() => {
+              onMark(item.id, true);
+              onDone();
+            }}
+          >
+            Znam
+          </button>
+        </div>
       )}
     </div>
   );
 }
 
-function TrueFalseItem({ item, onDone }) {
+function TrueFalseItem({ item, solved, onMark, onDone }) {
   const [answered, setAnswered] = useState(null);
 
+  const correct = item.sadrzaj.tocno;
   function answer(val) {
     setAnswered(val);
-    mark(item.id);
+    onMark(item.id, val === correct);
   }
 
-  const correct = item.sadrzaj.tocno;
   return (
     <div className="study-card">
+      {solved && <SolvedBadge />}
       <p className="study-prompt">
         <MathText text={item.sadrzaj.tvrdnja} />
       </p>
@@ -132,18 +183,19 @@ function TrueFalseItem({ item, onDone }) {
   );
 }
 
-function McqItem({ item, onDone }) {
+function McqItem({ item, solved, onMark, onDone }) {
   const [selected, setSelected] = useState(null);
+  const correctIdx = item.sadrzaj.tocna;
 
   function choose(i) {
     if (selected !== null) return;
     setSelected(i);
-    mark(item.id);
+    onMark(item.id, i === correctIdx);
   }
 
-  const correctIdx = item.sadrzaj.tocna;
   return (
     <div className="study-card">
+      {solved && <SolvedBadge />}
       <p className="study-prompt">
         <MathText text={item.sadrzaj.pitanje} />
       </p>
@@ -170,7 +222,7 @@ function McqItem({ item, onDone }) {
   );
 }
 
-function FillinItem({ item, onDone }) {
+function FillinItem({ item, solved, onMark, onDone }) {
   const [value, setValue] = useState("");
   const [checked, setChecked] = useState(false);
 
@@ -178,16 +230,18 @@ function FillinItem({ item, onDone }) {
     return s.trim().toLowerCase().replace(/\s+/g, "");
   }
 
+  const isCorrect = normalize(value) === normalize(item.sadrzaj.odgovor);
+
   function check() {
     setChecked(true);
-    mark(item.id);
+    onMark(item.id, isCorrect);
   }
 
-  const isCorrect = normalize(value) === normalize(item.sadrzaj.odgovor);
   const [before, after] = item.sadrzaj.tekst.split("___");
 
   return (
     <div className="study-card">
+      {solved && <SolvedBadge />}
       <p className="study-prompt fillin-prompt">
         <MathText text={before} />
         <input
