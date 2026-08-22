@@ -211,7 +211,7 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 
 /* ---------- Ucenje: study layout, flashcard 3D flip, T/N, MCQ, fillin ---------- */
 .study { max-width: 640px; margin: 0 auto; }
-.study-progress { font-size: .82rem; color: var(--muted); margin-bottom: .8rem; text-align: center; }
+.study-progress { font-size: .82rem; color: var(--muted); margin-bottom: .8rem; display: flex; justify-content: space-between; align-items: center; }
 
 .study-nav { display: flex; justify-content: space-between; margin-top: 1rem; }
 
@@ -296,3 +296,49 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
   font-size: .8rem; color: var(--muted); font-weight: 500; cursor: pointer; }
 .hide-toggle input { width: auto; margin: 0; }
 .self-assess { display: flex; gap: .6rem; justify-content: center; }
+
+
+/* ---------- Odabir tipa teorije prije ucenja ---------- */
+.type-select { max-width: 640px; margin: 0 auto; }
+.type-select-label { font-weight: 600; color: var(--ink); margin-bottom: .8rem; }
+.type-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .7rem; margin-bottom: 1rem; }
+.type-opt { text-align: left; cursor: pointer; border: 1px solid var(--line); background: var(--surface);
+  border-radius: 12px; padding: .8rem 1rem; display: flex; flex-direction: column; gap: .2rem;
+  transition: border-color .2s, box-shadow .2s; }
+.type-opt:hover { border-color: var(--sky); }
+.type-opt.active { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(28,110,242,.15); }
+.type-opt-label { font-weight: 600; font-size: .95rem; color: var(--ink); }
+.type-opt-count { font-size: .78rem; color: var(--muted); }
+.hide-toggle-standalone { display: block; float: none; margin-bottom: 1.2rem; }
+
+@media (max-width: 520px) { .type-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Tint cijele kartice: zeleno (tocno) / crveno (netocno) ---------- */
+.study-card.card-correct { background: rgba(31,146,84,.08); border-color: #1f9254;
+  transition: background-color .3s ease, border-color .3s ease; }
+.study-card.card-wrong { background: rgba(217,58,63,.08); border-color: #d93a3f;
+  transition: background-color .3s ease, border-color .3s ease; }
+
+.live-solved { color: var(--blue-600); font-weight: 600; }
+
+
+/* ---------- Pre-show tocnog odgovora kad je pitanje vec rijeseno ---------- */
+.fillin-input.prefilled-correct { color: #1f9254; font-weight: 600; border-color: #1f9254; }
+
+
+/* ---------- Popravak: preglednik nasilno posivi tekst disabled gumba ---------- */
+.mcq-opt, .tf-btn {
+  color: var(--ink);
+  opacity: 1;
+  -webkit-text-fill-color: var(--ink);
+}
+.mcq-opt:disabled, .tf-btn:disabled {
+  color: var(--ink);
+  opacity: 1;
+  -webkit-text-fill-color: var(--ink);
+  cursor: default;
+}
+.mcq-opt.mcq-correct, .mcq-opt.mcq-correct:disabled { color: #1f9254; -webkit-text-fill-color: #1f9254; }
+.mcq-opt.mcq-wrong, .mcq-opt.mcq-wrong:disabled { color: #d93a3f; -webkit-text-fill-color: #d93a3f; }
+.tf-btn.tf-correct, .tf-btn.tf-correct:disabled { color: #1f9254; -webkit-text-fill-color: #1f9254; }
+.tf-btn.tf-wrong, .tf-btn.tf-wrong:disabled { color: #d93a3f; -webkit-text-fill-color: #d93a3f; }
