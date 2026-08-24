@@ -1,10 +1,4 @@
-"""Jednokratni uvoz teorije za kolegij 'Linearna algebra II'.
-
-Pokretanje (iz mape backend/, s aktiviranim venv):
-    python -m app.import_theory_lin_alg_2
-
-Skripta NIJE idempotentna - ako je pokrenes dvaput, dobit ces duplikate.
-"""
+"""Jednokratni uvoz teorije za kolegij 'Linearna algebra II'."""
 
 from .database import SessionLocal
 from . import models

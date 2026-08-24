@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import ProblemsEditor from "../components/ProblemsEditor";
@@ -8,6 +9,12 @@ const YEARS = [
   { n: 1, rimski: "I", rijec: "Prva godina" },
   { n: 2, rimski: "II", rijec: "Druga godina" },
   { n: 3, rimski: "III", rijec: "Treća godina" },
+];
+
+// Ovi kolegiji nemaju teoriju (samo zadaci) - ne prikazuj admin editor za Teoriju.
+const NO_THEORY_COURSES = [
+  "Primijenjena matematika za racunalnu znanost",
+  "Primjena diferencijalnog i integralnog racuna",
 ];
 
 export default function AdminCoursesPage() {
@@ -54,6 +61,7 @@ export default function AdminCoursesPage() {
     selected && selected.modules.length > 0
       ? selected.modules
       : [{ id: null, naziv: null }];
+  const hideTheory = selected && NO_THEORY_COURSES.includes(selected.naziv);
 
   return (
     <div className="app">
@@ -61,10 +69,10 @@ export default function AdminCoursesPage() {
       <div className="glow glow-b" />
 
       <header className="topbar">
-        <span className="brand">
+        <Link to="/" className="brand">
           <img className="logo" src="/logo.png" alt="" />
           e‑Mathos
-        </span>
+        </Link>
         <span className="who">
           {user?.username}
           <button className="ghost" onClick={logout}>
@@ -147,14 +155,16 @@ export default function AdminCoursesPage() {
               <div className="area" key={area.id ?? "root"}>
                 {area.naziv && <h2 className="area-title">{area.naziv}</h2>}
                 <div className="section-cards">
-                  <SectionCard
-                    label="Teorija"
-                    desc="Flash kartice, T/N, MCQ, nadopuni…"
-                    active={section?.kind === "teorija" && section?.moduleId === area.id}
-                    onClick={() =>
-                      setSection({ kind: "teorija", moduleId: area.id, moduleName: area.naziv })
-                    }
-                  />
+                  {!hideTheory && (
+                    <SectionCard
+                      label="Teorija"
+                      desc="Flash kartice, T/N, MCQ, nadopuni…"
+                      active={section?.kind === "teorija" && section?.moduleId === area.id}
+                      onClick={() =>
+                        setSection({ kind: "teorija", moduleId: area.id, moduleName: area.naziv })
+                      }
+                    />
+                  )}
                   <SectionCard
                     label="Zadaci"
                     desc="Zadaci s hintovima i rješenjem"

@@ -1,13 +1,4 @@
-"""Jednokratni uvoz teorije za kolegij 'Diferencijalni racun'.
-
-Pokretanje (iz mape backend/, s aktiviranim venv):
-    python -m app.import_theory_dif_racun
-
-Skripta NIJE idempotentna namjerno jednostavna - ako je pokrenes dvaput,
-dobit ces duplikate. Prije ponovnog pokretanja obrisi postojece stavke
-teorije za ovaj kolegij kroz admin sucelje, ili pitaj Claudea da doda
-provjeru duplikata.
-"""
+"""Jednokratni uvoz teorije za kolegij 'Diferencijalni racun'."""
 
 from .database import SessionLocal
 from . import models

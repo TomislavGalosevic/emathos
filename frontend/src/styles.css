@@ -35,7 +35,8 @@ body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink)
   border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: .55rem;
   font-family: "Sora", sans-serif; font-weight: 800; font-size: 1.25rem;
-  letter-spacing: .3px; color: var(--blue); }
+  letter-spacing: .3px; color: var(--blue); text-decoration: none; cursor: pointer; }
+.brand:hover { opacity: .85; }
 .logo { width: 30px; height: 30px; object-fit: contain; }
 .who { display: flex; align-items: center; gap: .8rem; color: var(--muted); font-size: .9rem; }
 
@@ -342,3 +343,4 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .mcq-opt.mcq-wrong, .mcq-opt.mcq-wrong:disabled { color: #d93a3f; -webkit-text-fill-color: #d93a3f; }
 .tf-btn.tf-correct, .tf-btn.tf-correct:disabled { color: #1f9254; -webkit-text-fill-color: #1f9254; }
 .tf-btn.tf-wrong, .tf-btn.tf-wrong:disabled { color: #d93a3f; -webkit-text-fill-color: #d93a3f; }
+

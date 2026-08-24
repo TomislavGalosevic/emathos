@@ -1,10 +1,4 @@
-"""Jednokratni uvoz teorije za kolegij 'Integralni racun'.
-
-Pokretanje (iz mape backend/, s aktiviranim venv):
-    python -m app.import_theory_int_racun
-
-Skripta NIJE idempotentna - ako je pokrenes dvaput, dobit ces duplikate.
-"""
+"""Jednokratni uvoz teorije za kolegij 'Integralni racun'."""
 
 from .database import SessionLocal
 from . import models
