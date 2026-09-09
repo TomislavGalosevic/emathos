@@ -58,6 +58,8 @@ export const api = {
   deleteProblem: (id) => request(`/api/problems/${id}`, { method: "DELETE" }),
   checkProblem: (id, odgovor) =>
     request(`/api/problems/${id}/check`, { method: "POST", body: { odgovor } }),
+  markProblemSeen: (id) =>
+    request(`/api/problems/${id}/seen`, { method: "POST" }),
 
   listTheory: (courseId, moduleId) =>
     request(`/api/theory${qs({ course_id: courseId, module_id: moduleId })}`, { auth: false }),

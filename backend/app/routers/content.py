@@ -136,6 +136,40 @@ def check_problem_answer(
     return {"tocno": tocno}
 
 
+@router.post("/problems/{problem_id}/seen")
+def mark_problem_seen(
+    problem_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Oznaci zadatak rijesenim kada student prikaze rjesenje."""
+    problem = db.get(models.Problem, problem_id)
+    if not problem:
+        raise HTTPException(status_code=404, detail="Zadatak ne postoji")
+
+    progress = (
+        db.query(models.Progress)
+        .filter(
+            models.Progress.user_id == current_user.id,
+            models.Progress.kind == "problem",
+            models.Progress.item_id == problem_id,
+        )
+        .first()
+    )
+    if not progress:
+        progress = models.Progress(
+            user_id=current_user.id,
+            kind="problem",
+            item_id=problem_id,
+            broj_pokusaja=0,
+        )
+        db.add(progress)
+
+    progress.status = "solved"
+    db.commit()
+    return {"ok": True}
+
+
 # ---------------------------------------------------------------------------
 # Teorija (TheoryItem)
 # ---------------------------------------------------------------------------

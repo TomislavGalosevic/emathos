@@ -344,3 +344,17 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .tf-btn.tf-correct, .tf-btn.tf-correct:disabled { color: #1f9254; -webkit-text-fill-color: #1f9254; }
 .tf-btn.tf-wrong, .tf-btn.tf-wrong:disabled { color: #d93a3f; -webkit-text-fill-color: #d93a3f; }
 
+.math-block .katex { font-size: 1.1em; }
+.study-prompt { display: block; line-height: 1.8; }
+.fillin-blank { border-bottom: 2px solid var(--ink); display: inline-block; min-width: 80px; margin: 0 4px; }
+
+.math-block .katex { font-size: 1.1em; }
+.study-prompt { display: block; line-height: 1.8; }
+.multi-fields { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.multi-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.multi-field label { min-width: 180px; font-weight: 500; }
+.multi-field input { flex: 1; min-width: 120px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 0.95rem; }
+.multi-field input:disabled { background: var(--surface); }
+.multi-field .field-ok { color: #16a34a; font-weight: 600; margin-left: 6px; }
+.multi-field .field-bad { color: #dc2626; font-weight: 600; margin-left: 6px; }
+.multi-field .field-correct { color: #16a34a; font-size: 0.9rem; margin-left: 6px; }
