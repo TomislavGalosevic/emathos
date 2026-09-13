@@ -358,3 +358,15 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .multi-field .field-ok { color: #16a34a; font-weight: 600; margin-left: 6px; }
 .multi-field .field-bad { color: #dc2626; font-weight: 600; margin-left: 6px; }
 .multi-field .field-correct { color: #16a34a; font-size: 0.9rem; margin-left: 6px; }
+
+.matrix-size { display: flex; gap: 8px; align-items: center; margin: 10px 0; }
+.matrix-size select { padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); }
+.matrix-grid { display: inline-grid; gap: 4px; margin: 10px 0; padding: 10px; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); border-radius: 0; }
+.matrix-grid input { width: 60px; text-align: center; padding: 4px; border: 1px solid var(--line); border-radius: 6px; font-size: 0.95rem; }
+.matrix-grid input:disabled { background: var(--surface); }
+.matrix-grid input.cell-ok { border-color: #16a34a; background: #f0fdf4; }
+.matrix-grid input.cell-bad { border-color: #dc2626; background: #fef2f2; }
+
+.study-prompt { line-height: 2.4; }
+.study-card .katex .accent { overflow: visible; }
+.study-card .katex .mover { padding-top: 0.15em; }

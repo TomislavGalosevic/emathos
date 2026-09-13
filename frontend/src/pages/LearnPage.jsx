@@ -11,7 +11,6 @@ const YEARS = [
   { n: 3, rimski: "III", rijec: "Treća godina" },
 ];
 
-// Ovi kolegiji nemaju teoriju (samo zadaci) - ne prikazuj im karticu Teorija.
 const NO_THEORY_COURSES = [
   "Primijenjena matematika za racunalnu znanost",
   "Primjena diferencijalnog i integralnog racuna",
@@ -29,9 +28,9 @@ export default function LearnPage() {
   const [view, setView] = useState("years");
   const [year, setYear] = useState(null);
   const [courses, setCourses] = useState([]);
-  const [courseProgress, setCourseProgress] = useState({}); // { [courseId]: percent|null }
+  const [courseProgress, setCourseProgress] = useState({});
   const [selected, setSelected] = useState(null);
-  const [areaProgress, setAreaProgress] = useState(null); // CourseProgressOut.areas za odabrani kolegij
+  const [areaProgress, setAreaProgress] = useState(null);
   const [section, setSection] = useState(null);
 
   useEffect(() => {
@@ -52,6 +51,12 @@ export default function LearnPage() {
     ).then((pairs) => {
       setCourseProgress((prev) => ({ ...prev, ...Object.fromEntries(pairs) }));
     });
+  }
+
+  function refreshAreaProgress() {
+    if (selected) {
+      api.courseProgress(selected.id).then((r) => setAreaProgress(r.areas));
+    }
   }
 
   async function openCourse(id) {
@@ -199,6 +204,7 @@ export default function LearnPage() {
                     key={`p-${selected.id}-${section.moduleId}`}
                     courseId={selected.id}
                     moduleId={section.moduleId}
+                    onProgressChange={refreshAreaProgress}
                   />
                 )}
               </div>

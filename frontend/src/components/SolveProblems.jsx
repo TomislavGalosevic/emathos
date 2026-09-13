@@ -15,7 +15,7 @@ function normalize(s) {
   return (s || "").replace(/\s+/g, "").toLowerCase().replace(/,/g, ".").trim();
 }
 
-export default function SolveProblems({ courseId, moduleId }) {
+export default function SolveProblems({ courseId, moduleId, onProgressChange }) {
   const [problems, setProblems] = useState([]);
   const [solvedIds, setSolvedIds] = useState(new Set());
   const [sessionSolvedIds, setSessionSolvedIds] = useState(new Set());
@@ -29,7 +29,12 @@ export default function SolveProblems({ courseId, moduleId }) {
     Promise.all([api.listProblems(courseId, moduleId), api.myProgress("problem")]).then(
       ([probs, progress]) => {
         setProblems(shuffle(probs));
-        setSolvedIds(new Set(progress.filter((p) => p.status === "solved").map((p) => p.item_id)));
+        const problemIds = new Set(probs.map((p) => p.id));
+        setSolvedIds(new Set(
+          progress
+            .filter((p) => p.status === "solved" && problemIds.has(p.item_id))
+            .map((p) => p.item_id)
+        ));
         setLoading(false);
       }
     );
@@ -38,6 +43,7 @@ export default function SolveProblems({ courseId, moduleId }) {
   function markSolved(problemId) {
     setSolvedIds((prev) => new Set(prev).add(problemId));
     if (hideSolved) setSessionSolvedIds((prev) => new Set(prev).add(problemId));
+    if (onProgressChange) onProgressChange();
   }
 
   function toggleHideSolved(checked) {
@@ -79,7 +85,9 @@ export default function SolveProblems({ courseId, moduleId }) {
         </label>
       </div>
 
-      {problem.tip === "multi" ? (
+      {problem.tip === "matrix" ? (
+        <MatrixProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
+      ) : problem.tip === "multi" ? (
         <MultiProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
       ) : (
         <ProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
@@ -93,7 +101,6 @@ export default function SolveProblems({ courseId, moduleId }) {
   );
 }
 
-/* ---- SINGLE ANSWER ---- */
 function ProblemCard({ problem, solved, onSolved }) {
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState(null);
@@ -101,8 +108,6 @@ function ProblemCard({ problem, solved, onSolved }) {
   const [hintsShown, setHintsShown] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
   const [locked, setLocked] = useState(false);
-
-  const isSelf = problem.tip === "self";
 
   async function check() {
     if (!answer.trim() || locked) return;
@@ -119,8 +124,6 @@ function ProblemCard({ problem, solved, onSolved }) {
     setShowSolution(true);
     setLocked(true);
     setResult(null);
-    api.markProblemSeen(problem.id).catch(() => {});
-    onSolved();
   }
 
   const inputDisabled = locked || checking;
@@ -130,16 +133,14 @@ function ProblemCard({ problem, solved, onSolved }) {
       {solved && <span className="solved-badge">✓ Riješeno</span>}
       <p className="study-prompt"><MathText text={problem.tekst} /></p>
 
-      {!isSelf && (
-        <div className="solve-row">
-          <input value={answer} onChange={(e) => setAnswer(e.target.value)}
-            placeholder={locked ? "Rješenje je prikazano" : "Tvoj odgovor…"}
-            onKeyDown={(e) => e.key === "Enter" && check()} disabled={inputDisabled} />
-          <button className="solid" onClick={check} disabled={inputDisabled || !answer.trim()}>
-            {checking ? "Provjera…" : "Provjeri"}
-          </button>
-        </div>
-      )}
+      <div className="solve-row">
+        <input value={answer} onChange={(e) => setAnswer(e.target.value)}
+          placeholder={locked ? "Rješenje je prikazano" : "Tvoj odgovor…"}
+          onKeyDown={(e) => e.key === "Enter" && check()} disabled={inputDisabled} />
+        <button className="solid" onClick={check} disabled={inputDisabled || !answer.trim()}>
+          {checking ? "Provjera…" : "Provjeri"}
+        </button>
+      </div>
 
       {result === true && <p className="feedback feedback-ok">Točno! 🎉</p>}
       {result === false && !locked && <p className="feedback feedback-bad">Netočno, pokušaj ponovno ili zatraži hint.</p>}
@@ -170,7 +171,6 @@ function ProblemCard({ problem, solved, onSolved }) {
   );
 }
 
-/* ---- MULTI ANSWER ---- */
 function MultiProblemCard({ problem, solved, onSolved }) {
   let fields = [];
   try { fields = JSON.parse(problem.tocan_odgovor); } catch { fields = []; }
@@ -201,8 +201,6 @@ function MultiProblemCard({ problem, solved, onSolved }) {
     setShowSolution(true);
     setLocked(true);
     setChecked(false);
-    api.markProblemSeen(problem.id).catch(() => {});
-    onSolved();
   }
 
   return (
@@ -239,9 +237,7 @@ function MultiProblemCard({ problem, solved, onSolved }) {
         </div>
       )}
 
-      {checked && !locked && results.every(Boolean) && (
-        <p className="feedback feedback-ok">Sve točno! 🎉</p>
-      )}
+      {checked && locked && <p className="feedback feedback-ok">Sve točno! 🎉</p>}
       {checked && !locked && !results.every(Boolean) && (
         <p className="feedback feedback-bad">Nisu svi odgovori točni.</p>
       )}
@@ -253,6 +249,137 @@ function MultiProblemCard({ problem, solved, onSolved }) {
           ))}
           {hintsShown < problem.hints.length && (
             <button className="ghost" onClick={() => setHintsShown((n) => n + 1)}>
+              Pokaži hint ({hintsShown + 1}/{problem.hints.length})
+            </button>
+          )}
+        </div>
+      )}
+
+      {problem.rjesenje && !locked && (
+        <div className="solution-block">
+          <button className="ghost" onClick={revealSolution}>Prikaži rješenje</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MatrixProblemCard({ problem, solved, onSolved }) {
+  let expected = { matrix: [[]] };
+  try { expected = JSON.parse(problem.tocan_odgovor); } catch {}
+
+  const [rows, setRows] = useState(2);
+  const [cols, setCols] = useState(2);
+  const [cells, setCells] = useState(() => Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => "")));
+  const [checked, setChecked] = useState(false);
+  const [cellResults, setCellResults] = useState([]);
+  const [showSolution, setShowSolution] = useState(false);
+  const [locked, setLocked] = useState(false);
+  const [hintsShown, setHintsShown] = useState(0);
+  const [dimError, setDimError] = useState(false);
+
+  function updateCell(r, c, val) {
+    setCells(prev => {
+      const next = prev.map(row => [...row]);
+      next[r][c] = val;
+      return next;
+    });
+  }
+
+  function checkMatrix() {
+    const exp = expected.matrix;
+    const expRows = exp.length;
+    const expCols = exp[0].length;
+
+    if (rows !== expRows || cols !== expCols) {
+      setDimError(true);
+      setCellResults([]);
+      setChecked(true);
+      return;
+    }
+
+    setDimError(false);
+    const results = [];
+    let allOk = true;
+    for (let r = 0; r < rows; r++) {
+      results[r] = [];
+      for (let c = 0; c < cols; c++) {
+        const userVal = parseFloat(cells[r][c].replace(",", "."));
+        const expVal = parseFloat(exp[r][c]);
+        const ok = !isNaN(userVal) && Math.abs(userVal - expVal) < 0.01;
+        results[r][c] = ok;
+        if (!ok) allOk = false;
+      }
+    }
+    setCellResults(results);
+    setChecked(true);
+
+    if (allOk) {
+      setLocked(true);
+      api.markProblemSeen(problem.id).catch(() => {});
+      onSolved();
+    }
+  }
+
+  function revealSolution() {
+    setShowSolution(true);
+    setLocked(true);
+    setDimError(false);
+    const exp = expected.matrix;
+    setRows(exp.length);
+    setCols(exp[0].length);
+    setCells(exp.map(row => row.map(v => String(v))));
+  }
+
+  return (
+    <div className="study-card">
+      {solved && <span className="solved-badge">✓ Riješeno</span>}
+      <p className="study-prompt"><MathText text={problem.tekst} /></p>
+
+      <div className="matrix-size">
+        <span>Dimenzije:</span>
+        <select value={rows} onChange={e => { setRows(+e.target.value); setChecked(false); setDimError(false); }} disabled={locked}>
+          {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+        </select>
+        <span>×</span>
+        <select value={cols} onChange={e => { setCols(+e.target.value); setChecked(false); setDimError(false); }} disabled={locked}>
+          {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+        </select>
+      </div>
+
+      <div className="matrix-grid" style={{ gridTemplateColumns: `repeat(${cols}, 60px)` }}>
+        {Array.from({ length: rows }).map((_, r) =>
+          Array.from({ length: cols }).map((_, c) => (
+            <input
+              key={`${r}-${c}`}
+              value={cells[r]?.[c] || ""}
+              onChange={e => updateCell(r, c, e.target.value)}
+              disabled={locked}
+              className={checked && cellResults[r]?.[c] === true ? "cell-ok" : checked && cellResults[r]?.[c] === false ? "cell-bad" : ""}
+            />
+          ))
+        )}
+      </div>
+
+      {dimError && <p className="feedback feedback-bad">Dimenzije matrice nisu ispravne.</p>}
+      {checked && locked && <p className="feedback feedback-ok">Točno! 🎉</p>}
+      {checked && !locked && !dimError && cellResults.length > 0 && !cellResults.flat().every(Boolean) && (
+        <p className="feedback feedback-bad">Neke vrijednosti nisu točne.</p>
+      )}
+
+      {!locked && (
+        <div className="solve-row">
+          <button className="solid" onClick={checkMatrix}>Provjeri</button>
+        </div>
+      )}
+
+      {problem.hints.length > 0 && !locked && (
+        <div className="hints-block">
+          {problem.hints.slice(0, hintsShown).map((h) => (
+            <p key={h.id} className="hint-reveal">💡 <MathText text={h.sadrzaj} /></p>
+          ))}
+          {hintsShown < problem.hints.length && (
+            <button className="ghost" onClick={() => setHintsShown(n => n + 1)}>
               Pokaži hint ({hintsShown + 1}/{problem.hints.length})
             </button>
           )}
