@@ -43,6 +43,16 @@ def check_answer(user_answer: str, correct_answer: str) -> bool:
     if not user_answer or not correct_answer:
         return False
 
+    # 0) choice tip: tocan_odgovor je JSON {"answer": "...", "options": [...]}
+    if correct_answer.strip().startswith("{"):
+        import json as _json
+        try:
+            data = _json.loads(correct_answer)
+            if "answer" in data:
+                return _normalize_text(user_answer) == _normalize_text(data["answer"])
+        except Exception:
+            pass
+
     # 1) pokusaj kao matricu
     m_user = _try_matrix(user_answer)
     m_correct = _try_matrix(correct_answer)

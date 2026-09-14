@@ -370,3 +370,20 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .study-prompt { line-height: 2.4; }
 .study-card .katex .accent { overflow: visible; }
 .study-card .katex .mover { padding-top: 0.15em; }
+/* ── Choice (klikni opciju) ──────────────────────────────────────────────── */
+.choice-options { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 14px 0; }
+.choice-btn {
+  padding: 0.5rem 1.2rem;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.choice-btn:hover:not(:disabled) { border-color: var(--accent, #4a7cf7); }
+.choice-btn.choice-selected  { border-color: var(--accent, #4a7cf7); background: #e8effe; }
+.choice-btn.choice-correct   { border-color: #16a34a; background: #f0fdf4; color: #14532d; font-weight: 600; }
+.choice-btn.choice-wrong     { border-color: #dc2626; background: #fef2f2; color: #7f1d1d; }
+.choice-btn:disabled { cursor: default; }

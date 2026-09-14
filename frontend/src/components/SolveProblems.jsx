@@ -89,6 +89,8 @@ export default function SolveProblems({ courseId, moduleId, onProgressChange }) 
         <MatrixProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
       ) : problem.tip === "multi" ? (
         <MultiProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
+      ) : problem.tip === "choice" ? (
+        <ChoiceProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
       ) : (
         <ProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
       )}
@@ -258,6 +260,79 @@ function MultiProblemCard({ problem, solved, onSolved }) {
       {problem.rjesenje && !locked && (
         <div className="solution-block">
           <button className="ghost" onClick={revealSolution}>Prikaži rješenje</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ChoiceProblemCard({ problem, solved, onSolved }) {
+  let options = [];
+  try { options = JSON.parse(problem.tocan_odgovor).options; } catch { options = []; }
+
+  const [selected, setSelected] = useState(null);
+  const [result, setResult] = useState(null); // true | false | null
+  const [hintsShown, setHintsShown] = useState(0);
+  const [showSolution, setShowSolution] = useState(false);
+  const locked = result === true || showSolution;
+
+  async function handleSelect(opt) {
+    if (locked) return;
+    setSelected(opt);
+    try {
+      const r = await api.checkProblem(problem.id, opt);
+      setResult(r.tocno);
+      if (r.tocno) onSolved();
+    } catch { setResult(false); }
+  }
+
+  function revealSolution() {
+    setShowSolution(true);
+  }
+
+  return (
+    <div className="study-card">
+      {solved && <span className="solved-badge">✓ Riješeno</span>}
+      <p className="study-prompt"><MathText text={problem.tekst} /></p>
+
+      <div className="choice-options">
+        {options.map((opt) => {
+          const isSelected = selected === opt;
+          let cls = "choice-btn";
+          if (isSelected && result === true)  cls += " choice-correct";
+          else if (isSelected && result === false) cls += " choice-wrong";
+          else if (isSelected) cls += " choice-selected";
+          return (
+            <button key={opt} className={cls} onClick={() => handleSelect(opt)} disabled={locked}>
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+
+      {result === true  && <p className="feedback feedback-ok">Točno! 🎉</p>}
+      {result === false && !locked && <p className="feedback feedback-bad">Netočno, pokušaj ponovno ili zatraži hint.</p>}
+
+      {problem.hints.length > 0 && !locked && result !== true && (
+        <div className="hints-block">
+          {problem.hints.slice(0, hintsShown).map((h) => (
+            <p key={h.id} className="hint-reveal">💡 <MathText text={h.sadrzaj} /></p>
+          ))}
+          {hintsShown < problem.hints.length && (
+            <button className="ghost" onClick={() => setHintsShown((n) => n + 1)}>
+              Pokaži hint ({hintsShown + 1}/{problem.hints.length})
+            </button>
+          )}
+        </div>
+      )}
+
+      {problem.rjesenje && (
+        <div className="solution-block">
+          {!showSolution && !result ? (
+            <button className="ghost" onClick={revealSolution}>Prikaži rješenje</button>
+          ) : showSolution ? (
+            <div className="solution-text"><strong>Rješenje:</strong> <MathText text={problem.rjesenje} /></div>
+          ) : null}
         </div>
       )}
     </div>

@@ -27,7 +27,6 @@ COURSES = [
     (2, "Primjena diferencijalnog i integralnog racuna", []),
     (2, "Vektorski prostori", []),
     (3, "Numericka matematika", []),
-    (3, "Realna analiza", []),
     (3, "Obicne diferencijalne jednadzbe", []),
 ]
 

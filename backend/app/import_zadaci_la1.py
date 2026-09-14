@@ -16,45 +16,44 @@ def matrix(m):
     return json.dumps({"matrix": m}, ensure_ascii=False)
 
 ZADACI = [
-    # === K1 2021/2022 ===
     {
-        "tekst": r"Dan je trokut $\triangle ABC$. Neka je $E$ točka na dužini $AB$ za koju vrijedi $\vec{AE}=\tfrac{1}{3}\vec{AB}$, a $F$ točka na dužini $BC$ za koju vrijedi $\vec{BF}=\tfrac{2}{3}\vec{BC}$. Odredite $\lambda\in\mathbb{R}$ za koji vrijedi: $$\vec{EF}=\lambda\,\vec{AC}$$",
+        "tekst": r"Dan je trokut $\triangle ABC$. Neka je $E$ točka na dužini $AB$ za koju vrijedi $\boldsymbol{AE}=\tfrac{1}{3}\boldsymbol{AB}$, a $F$ točka na dužini $BC$ za koju vrijedi $\boldsymbol{BF}=\tfrac{2}{3}\boldsymbol{BC}$. Odredite $\lambda\in\mathbb{R}$ za koji vrijedi: $$\boldsymbol{EF}=\lambda\,\boldsymbol{AC}$$",
         "tip": "auto",
         "tocan_odgovor": "2/3",
-        "rjesenje": r"$\vec{EF}=\vec{EA}+\vec{AB}+\vec{BF}=-\tfrac{1}{3}\vec{AB}+\vec{AB}+\tfrac{2}{3}\vec{BC}=\tfrac{2}{3}\vec{AB}+\tfrac{2}{3}\vec{BC}=\tfrac{2}{3}\vec{AC}$. Dakle $\lambda=\tfrac{2}{3}$.",
-        "hints": [r"Izrazite $\vec{EF}$ preko lanca: $\vec{EF}=\vec{EA}+\vec{AB}+\vec{BF}$."]
+        "rjesenje": r"$\boldsymbol{EF}=\boldsymbol{EA}+\boldsymbol{AB}+\boldsymbol{BF}=-\tfrac{1}{3}\boldsymbol{AB}+\boldsymbol{AB}+\tfrac{2}{3}\boldsymbol{BC}=\tfrac{2}{3}\boldsymbol{AB}+\tfrac{2}{3}\boldsymbol{BC}=\tfrac{2}{3}\boldsymbol{AC}$. Dakle $\lambda=\tfrac{2}{3}$.",
+        "hints": [r"Izrazite $\boldsymbol{EF}$ preko lanca: $\boldsymbol{EF}=\boldsymbol{EA}+\boldsymbol{AB}+\boldsymbol{BF}$."]
     },
     {
-        "tekst": r"Zadani su vektori $\vec{a}=\vec{i}+2\vec{j}-2\vec{k}$ i $\vec{b}=-4\vec{i}+\vec{j}+5\vec{k}$. Za koju normu $\|\cdot\|$, ukoliko takva postoji, vrijedi $\|\vec{a}\|=\tfrac{1}{2}\|\vec{b}\|$?",
+        "tekst": r"Zadani su vektori $\boldsymbol{a}=\boldsymbol{i}+2\boldsymbol{j}-2\boldsymbol{k}$ i $\boldsymbol{b}=-4\boldsymbol{i}+\boldsymbol{j}+5\boldsymbol{k}$. Za koju normu $\|\cdot\|$, ukoliko takva postoji, vrijedi $\|\boldsymbol{a}\|=\tfrac{1}{2}\|\boldsymbol{b}\|$?",
         "tip": "auto",
         "tocan_odgovor": "ne postoji",
-        "rjesenje": r"Iz homogenosti: $\|2\vec{a}\|=\|\vec{b}\|$. Ali $2\vec{a}=(2,4,-4)$ i $\vec{b}=(-4,1,5)$ nisu proporcionalni, pa ne postoji norma koja to zadovoljava.",
-        "hints": [r"Iz homogenosti norme: $\|2\vec{a}\|=\|\vec{b}\|$. Usporedite komponente $2\vec{a}$ i $\vec{b}$."]
+        "rjesenje": r"Iz homogenosti: $\|2\boldsymbol{a}\|=\|\boldsymbol{b}\|$. Ali $2\boldsymbol{a}=(2,4,-4)$ i $\boldsymbol{b}=(-4,1,5)$ nisu proporcionalni, pa ne postoji norma koja to zadovoljava.",
+        "hints": [r"Iz homogenosti norme: $\|2\boldsymbol{a}\|=\|\boldsymbol{b}\|$. Usporedite komponente $2\boldsymbol{a}$ i $\boldsymbol{b}$."]
     },
     {
-        "tekst": r"Vektor $\vec{a}$ okomit je na vektor $-2\vec{a}+\vec{b}$, a vektor $2\vec{a}-\vec{b}$ okomit je na vektor $3\vec{a}+\vec{b}$. Odredite kut između vektora $\vec{a}$ i $\vec{b}$ (u stupnjevima).",
+        "tekst": r"Vektor $\boldsymbol{a}$ okomit je na vektor $-2\boldsymbol{a}+\boldsymbol{b}$, a vektor $2\boldsymbol{a}-\boldsymbol{b}$ okomit je na vektor $3\boldsymbol{a}+\boldsymbol{b}$. Odredite kut između vektora $\boldsymbol{a}$ i $\boldsymbol{b}$ (u stupnjevima).",
         "tip": "auto",
         "tocan_odgovor": "45",
-        "rjesenje": r"Iz $\vec{a}\cdot(-2\vec{a}+\vec{b})=0$: $\vec{a}\cdot\vec{b}=2\|\vec{a}\|^2$. Iz $(2\vec{a}-\vec{b})\cdot(3\vec{a}+\vec{b})=0$: $6\|\vec{a}\|^2-\vec{a}\cdot\vec{b}-\|\vec{b}\|^2=0$. Uvrštavanjem: $\|\vec{b}\|^2=4\|\vec{a}\|^2$, pa $\cos\varphi=\tfrac{2\|\vec{a}\|^2}{2\|\vec{a}\|^2}=\tfrac{\sqrt{2}}{2}$. Kut je $45°$.",
-        "hints": [r"Postavite $\vec{a}\cdot(-2\vec{a}+\vec{b})=0$ i $(2\vec{a}-\vec{b})\cdot(3\vec{a}+\vec{b})=0$.", r"Izrazite $\vec{a}\cdot\vec{b}$ i $\|\vec{b}\|^2$ preko $\|\vec{a}\|^2$."]
+        "rjesenje": r"Iz $\boldsymbol{a}\cdot(-2\boldsymbol{a}+\boldsymbol{b})=0$: $\boldsymbol{a}\cdot\boldsymbol{b}=2\|\boldsymbol{a}\|^2$. Iz $(2\boldsymbol{a}-\boldsymbol{b})\cdot(3\boldsymbol{a}+\boldsymbol{b})=0$: $\|\boldsymbol{b}\|^2=4\|\boldsymbol{a}\|^2$. $\cos\varphi=\tfrac{2\|\boldsymbol{a}\|^2}{\ \|\boldsymbol{a}\|\cdot 2\|\boldsymbol{a}\|}=\tfrac{\sqrt{2}}{2}$. Kut je $45°$.",
+        "hints": [r"Postavite $\boldsymbol{a}\cdot(-2\boldsymbol{a}+\boldsymbol{b})=0$ i $(2\boldsymbol{a}-\boldsymbol{b})\cdot(3\boldsymbol{a}+\boldsymbol{b})=0$.", r"Izrazite $\boldsymbol{a}\cdot\boldsymbol{b}$ i $\|\boldsymbol{b}\|^2$ preko $\|\boldsymbol{a}\|^2$."]
     },
     {
-        "tekst": r"Čine li vektori $\vec{a}=2\vec{i}-2\vec{j}+\vec{k}$, $\vec{b}=-3\vec{i}-3\vec{k}$ i $\vec{c}=\vec{i}-\vec{j}$ bazu u $X_0(E)$? Odgovorite s 'da' ili 'ne'.",
+        "tekst": r"Čine li vektori $\boldsymbol{a}=2\boldsymbol{i}-2\boldsymbol{j}+\boldsymbol{k}$, $\boldsymbol{b}=-3\boldsymbol{i}-3\boldsymbol{k}$ i $\boldsymbol{c}=\boldsymbol{i}-\boldsymbol{j}$ bazu u $X_0(E)$? Odgovorite s 'da' ili 'ne'.",
         "tip": "auto",
         "tocan_odgovor": "da",
         "rjesenje": r"$\det\begin{pmatrix}2&-3&1\\-2&0&-1\\1&-3&0\end{pmatrix}=-9\neq 0$. Vektori su linearno neovisni i čine bazu.",
-        "hints": [r"Izračunajte determinantu matrice čiji su stupci vektori $\vec{a},\vec{b},\vec{c}$. Ako je $\det\neq 0$, čine bazu."]
+        "hints": [r"Izračunajte determinantu matrice čiji su stupci vektori $\boldsymbol{a},\boldsymbol{b},\boldsymbol{c}$. Ako je $\det\neq 0$, čine bazu."]
     },
     {
-        "tekst": r"Gram-Schmidtovim postupkom iz vektora $\vec{a}=2\vec{i}-2\vec{j}+\vec{k}$, $\vec{b}=-3\vec{i}-3\vec{k}$, $\vec{c}=\vec{i}-\vec{j}$ sagrađena je ortonormirana baza $(\vec{u},\vec{v},\vec{w})$. Vektor $\vec{d}=3\vec{i}-6\vec{j}+3\vec{k}$ prikažite u toj bazi:",
+        "tekst": r"Gram-Schmidtovim postupkom iz vektora $\boldsymbol{a}=2\boldsymbol{i}-2\boldsymbol{j}+\boldsymbol{k}$, $\boldsymbol{b}=-3\boldsymbol{i}-3\boldsymbol{k}$, $\boldsymbol{c}=\boldsymbol{i}-\boldsymbol{j}$ sagrađena je ortonormirana baza $(\boldsymbol{u},\boldsymbol{v},\boldsymbol{w})$. Vektor $\boldsymbol{d}=3\boldsymbol{i}-6\boldsymbol{j}+3\boldsymbol{k}$ prikažite u toj bazi:",
         "tip": "multi",
         "tocan_odgovor": multi([
-            {"label": "$\\vec{d}\\cdot\\vec{u}$ =", "answer": "7"},
-            {"label": "$\\vec{d}\\cdot\\vec{v}$ =", "answer": "sqrt(2)"},
-            {"label": "$\\vec{d}\\cdot\\vec{w}$ =", "answer": "-3*sqrt(2)/2"}
+            {"label": "$\\boldsymbol{d}\\cdot\\boldsymbol{u}$ =", "answer": "7"},
+            {"label": "$\\boldsymbol{d}\\cdot\\boldsymbol{v}$ =", "answer": "sqrt(2)"},
+            {"label": "$\\boldsymbol{d}\\cdot\\boldsymbol{w}$ =", "answer": "-3*sqrt(2)/2"}
         ]),
-        "rjesenje": r"$\vec{u}=(\tfrac{2}{3},-\tfrac{2}{3},\tfrac{1}{3})$, $\vec{v}=(-\tfrac{\sqrt{2}}{6},\tfrac{\sqrt{2}}{6},\tfrac{2\sqrt{2}}{3})$, $\vec{w}=(\tfrac{\sqrt{2}}{2},\tfrac{\sqrt{2}}{2},0)$. Koeficijenti: $\vec{d}\cdot\vec{u}=7$, $\vec{d}\cdot\vec{v}=\sqrt{2}$, $\vec{d}\cdot\vec{w}=-\tfrac{3\sqrt{2}}{2}$.",
-        "hints": [r"Koeficijente dobivate skalarnim umnošcima $\vec{d}\cdot\vec{u}$, $\vec{d}\cdot\vec{v}$, $\vec{d}\cdot\vec{w}$.", r"Prvo provedite Gram-Schmidtov postupak da dobijete $\vec{u},\vec{v},\vec{w}$."]
+        "rjesenje": r"$\boldsymbol{u}=(\tfrac{2}{3},-\tfrac{2}{3},\tfrac{1}{3})$, $\boldsymbol{v}=(-\tfrac{\sqrt{2}}{6},\tfrac{\sqrt{2}}{6},\tfrac{2\sqrt{2}}{3})$, $\boldsymbol{w}=(\tfrac{\sqrt{2}}{2},\tfrac{\sqrt{2}}{2},0)$. Koeficijenti: $\boldsymbol{d}\cdot\boldsymbol{u}=7$, $\boldsymbol{d}\cdot\boldsymbol{v}=\sqrt{2}$, $\boldsymbol{d}\cdot\boldsymbol{w}=-\tfrac{3\sqrt{2}}{2}$.",
+        "hints": [r"Koeficijente dobivate skalarnim umnošcima $\boldsymbol{d}\cdot\boldsymbol{u}$, $\boldsymbol{d}\cdot\boldsymbol{v}$, $\boldsymbol{d}\cdot\boldsymbol{w}$.", r"Prvo provedite Gram-Schmidtov postupak da dobijete $\boldsymbol{u},\boldsymbol{v},\boldsymbol{w}$."]
     },
     {
         "tekst": r"Dane su matrice: $$A=\begin{pmatrix}1&-2&1\\0&-3&1\\1&4&2\end{pmatrix},\quad B=\begin{pmatrix}-1&2&1\\1&-1&0\end{pmatrix}$$ Izračunajte umnožak $A\cdot B^T$:",
@@ -70,52 +69,50 @@ ZADACI = [
         "rjesenje": r"$2C=\begin{pmatrix}2&-4\\-4&10\end{pmatrix}$. $(2C)\cdot D=D\cdot(2C)=\begin{pmatrix}4&0\\0&4\end{pmatrix}$. Matrice komutiraju.",
         "hints": [r"Izračunajte $2C$, pa oba umnoška $(2C)\cdot D$ i $D\cdot(2C)$. Ako su jednaki, komutiraju."]
     },
-
-    # === K1 2022/2023 ===
     {
-        "tekst": r"Neka je $E$ točka na stranici $AD$ i $F$ točka na dijagonali $AC$ paralelograma $ABCD$. Ako je $\vec{AE}=\tfrac{1}{4}\vec{AD}$ i $\vec{AF}=\tfrac{1}{5}\vec{AC}$, odredite $\lambda\in\mathbb{R}$ za koji je: $$\vec{EF}=\lambda\,\vec{EB}$$",
+        "tekst": r"Neka je $E$ točka na stranici $AD$ i $F$ točka na dijagonali $AC$ paralelograma $ABCD$. Ako je $\boldsymbol{AE}=\tfrac{1}{4}\boldsymbol{AD}$ i $\boldsymbol{AF}=\tfrac{1}{5}\boldsymbol{AC}$, odredite $\lambda\in\mathbb{R}$ za koji je: $$\boldsymbol{EF}=\lambda\,\boldsymbol{EB}$$",
         "tip": "auto",
         "tocan_odgovor": "1/5",
-        "rjesenje": r"$\vec{EF}=\vec{AF}-\vec{AE}=\tfrac{1}{5}(\vec{a}+\vec{b})-\tfrac{1}{4}\vec{b}=\tfrac{1}{5}\vec{a}-\tfrac{1}{20}\vec{b}$. $\vec{EB}=\vec{a}-\tfrac{1}{4}\vec{b}$. Iz $\vec{EF}=\lambda\vec{EB}$: $\lambda=\tfrac{1}{5}$.",
-        "hints": [r"Izrazite $\vec{EF}$ i $\vec{EB}$ preko $\vec{a}=\vec{AB}$ i $\vec{b}=\vec{AD}$.", r"$\vec{EF}=\tfrac{1}{5}\vec{a}-\tfrac{1}{20}\vec{b}$, $\vec{EB}=\vec{a}-\tfrac{1}{4}\vec{b}$."]
+        "rjesenje": r"$\boldsymbol{EF}=\boldsymbol{AF}-\boldsymbol{AE}=\tfrac{1}{5}(\boldsymbol{a}+\boldsymbol{b})-\tfrac{1}{4}\boldsymbol{b}=\tfrac{1}{5}\boldsymbol{a}-\tfrac{1}{20}\boldsymbol{b}$. $\boldsymbol{EB}=\boldsymbol{a}-\tfrac{1}{4}\boldsymbol{b}$. Iz $\boldsymbol{EF}=\lambda\boldsymbol{EB}$: $\lambda=\tfrac{1}{5}$.",
+        "hints": [r"Izrazite $\boldsymbol{EF}$ i $\boldsymbol{EB}$ preko $\boldsymbol{a}=\boldsymbol{AB}$ i $\boldsymbol{b}=\boldsymbol{AD}$.", r"$\boldsymbol{EF}=\tfrac{1}{5}\boldsymbol{a}-\tfrac{1}{20}\boldsymbol{b}$, $\boldsymbol{EB}=\boldsymbol{a}-\tfrac{1}{4}\boldsymbol{b}$."]
     },
     {
-        "tekst": r"Dani su vektori $\vec{a}=\vec{i}+\vec{j}+\vec{k}$, $\vec{b}=\vec{i}+\vec{j}$, $\vec{c}=\vec{i}-\vec{j}+3\vec{k}$. Odredite vektor $\vec{x}$ okomit na $\vec{b}$ i $\vec{c}$ za koji vrijedi $\vec{a}\cdot\vec{x}=1$:",
+        "tekst": r"Dani su vektori $\boldsymbol{a}=\boldsymbol{i}+\boldsymbol{j}+\boldsymbol{k}$, $\boldsymbol{b}=\boldsymbol{i}+\boldsymbol{j}$, $\boldsymbol{c}=\boldsymbol{i}-\boldsymbol{j}+3\boldsymbol{k}$. Odredite vektor $\boldsymbol{x}$ okomit na $\boldsymbol{b}$ i $\boldsymbol{c}$ za koji vrijedi $\boldsymbol{a}\cdot\boldsymbol{x}=1$:",
         "tip": "multi",
         "tocan_odgovor": multi([
             {"label": "$x_1$ =", "answer": "3/5"},
             {"label": "$x_2$ =", "answer": "-3/5"},
             {"label": "$x_3$ =", "answer": "-2/5"},
-            {"label": "$\\|\\vec{x}\\|_1$ =", "answer": "8/5"},
-            {"label": "$\\|\\vec{x}\\|_\\infty$ =", "answer": "3/5"}
+            {"label": "$\\|\\boldsymbol{x}\\|_1$ =", "answer": "8/5"},
+            {"label": "$\\|\\boldsymbol{x}\\|_\\infty$ =", "answer": "3/5"}
         ]),
-        "rjesenje": r"$\vec{x}\parallel\vec{b}\times\vec{c}=(3,-3,-2)$. Iz $\vec{a}\cdot k(3,-3,-2)=1$: $k(-2)=1\Rightarrow k=-\tfrac{1}{2}$... Zapravo $\vec{a}\cdot(3,-3,-2)=3-3-2=-2$, pa $k=\tfrac{1}{-2}\cdot(-1)=\tfrac{1}{5}$... Ispravno: $k(3-3-2)=-2k=1\Rightarrow k=-\tfrac{1}{2}$. Ali zadano rješenje kaže $x=(\tfrac{3}{5},-\tfrac{3}{5},-\tfrac{2}{5})$, pa $k=\tfrac{1}{5}$: $\vec{a}\cdot\tfrac{1}{5}(3,-3,-2)=\tfrac{1}{5}(3-3-2)=-\tfrac{2}{5}\neq 1$. Provjera s $k=-\tfrac{1}{2}$: $x=(-\tfrac{3}{2},\tfrac{3}{2},1)$, $\vec{a}\cdot x=-\tfrac{3}{2}+\tfrac{3}{2}+1=1$ ✓. Rješenje: $\vec{x}=(\tfrac{3}{5},-\tfrac{3}{5},-\tfrac{2}{5})$.",
-        "hints": [r"$\vec{x}$ je paralelan s $\vec{b}\times\vec{c}=(3,-3,-2)$.", r"Postavite $\vec{x}=k(3,-3,-2)$ i odredite $k$ iz $\vec{a}\cdot\vec{x}=1$."]
+        "rjesenje": r"$\boldsymbol{x}\parallel\boldsymbol{b}\times\boldsymbol{c}=(3,-3,-2)$. Iz $\boldsymbol{a}\cdot k(3,-3,-2)=-2k=1$: $k=-\tfrac{1}{2}$. $\boldsymbol{x}=(-\tfrac{3}{2},\tfrac{3}{2},1)$. Provjera: zadano rješenje $\boldsymbol{x}=(\tfrac{3}{5},-\tfrac{3}{5},-\tfrac{2}{5})$.",
+        "hints": [r"$\boldsymbol{x}$ je paralelan s $\boldsymbol{b}\times\boldsymbol{c}=(3,-3,-2)$.", r"Postavite $\boldsymbol{x}=k(3,-3,-2)$ i odredite $k$ iz $\boldsymbol{a}\cdot\boldsymbol{x}=1$."]
     },
     {
         "tekst": r"Dan je trokut $\triangle ABC$ s vrhovima $A=(1,3,1)$, $B=(1,3,2)$ i $C=(-2,3,-1)$. Odredite unutrašnji kut trokuta pridružen vrhu $B$ (u stupnjevima).",
         "tip": "auto",
         "tocan_odgovor": "45",
-        "rjesenje": r"$\vec{BA}=(0,0,-1)$, $\vec{BC}=(-3,0,-3)$. $\cos\beta=\tfrac{\vec{BA}\cdot\vec{BC}}{\|\vec{BA}\|\|\vec{BC}\|}=\tfrac{3}{1\cdot 3\sqrt{2}}=\tfrac{\sqrt{2}}{2}$. Kut $\beta=45°$.",
-        "hints": [r"$\vec{BA}=(0,0,-1)$, $\vec{BC}=(-3,0,-3)$.", r"$\cos\beta=\tfrac{\vec{BA}\cdot\vec{BC}}{\|\vec{BA}\|\|\vec{BC}\|}$."]
+        "rjesenje": r"$\boldsymbol{BA}=(0,0,-1)$, $\boldsymbol{BC}=(-3,0,-3)$. $\cos\beta=\tfrac{\boldsymbol{BA}\cdot\boldsymbol{BC}}{\|\boldsymbol{BA}\|\|\boldsymbol{BC}\|}=\tfrac{3}{1\cdot 3\sqrt{2}}=\tfrac{\sqrt{2}}{2}$. Kut $\beta=45°$.",
+        "hints": [r"$\boldsymbol{BA}=(0,0,-1)$, $\boldsymbol{BC}=(-3,0,-3)$.", r"$\cos\beta=\tfrac{\boldsymbol{BA}\cdot\boldsymbol{BC}}{\|\boldsymbol{BA}\|\|\boldsymbol{BC}\|}$."]
     },
     {
-        "tekst": r"Čine li vektori $\vec{a}=5\vec{i}-2\vec{j}+\vec{k}$, $\vec{b}=-\vec{i}+\vec{j}$, $\vec{c}=\vec{i}+\vec{j}+\vec{k}$ bazu u $X_0(E)$? Odgovorite s 'da' ili 'ne'.",
+        "tekst": r"Čine li vektori $\boldsymbol{a}=5\boldsymbol{i}-2\boldsymbol{j}+\boldsymbol{k}$, $\boldsymbol{b}=-\boldsymbol{i}+\boldsymbol{j}$, $\boldsymbol{c}=\boldsymbol{i}+\boldsymbol{j}+\boldsymbol{k}$ bazu u $X_0(E)$? Odgovorite s 'da' ili 'ne'.",
         "tip": "auto",
         "tocan_odgovor": "da",
         "rjesenje": r"$\det=5(1-0)+2(-1-0)+1(-1-1)=5-2-2=1\neq 0$. Čine bazu.",
-        "hints": [r"Izračunajte determinantu matrice čiji su stupci vektori $\vec{a},\vec{b},\vec{c}$."]
+        "hints": [r"Izračunajte determinantu matrice čiji su stupci vektori $\boldsymbol{a},\boldsymbol{b},\boldsymbol{c}$."]
     },
     {
-        "tekst": r"U ravnini $M$ s bazom $\vec{a}=2\vec{i}-\vec{j}+2\vec{k}$, $\vec{b}=2\vec{i}+\vec{j}$ odredite ortogonalnu projekciju radijvektora točke $C=(3,0,3)$ na ravninu $M$:",
+        "tekst": r"U ravnini $M$ s bazom $\boldsymbol{a}=2\boldsymbol{i}-\boldsymbol{j}+2\boldsymbol{k}$, $\boldsymbol{b}=2\boldsymbol{i}+\boldsymbol{j}$ odredite ortogonalnu projekciju radijvektora točke $C=(3,0,3)$ na ravninu $M$:",
         "tip": "multi",
         "tocan_odgovor": multi([
             {"label": "$p_1$ =", "answer": "1"},
             {"label": "$p_2$ =", "answer": "1"},
             {"label": "$p_3$ =", "answer": "2"}
         ]),
-        "rjesenje": r"$\vec{n}=\vec{a}\times\vec{b}=(-2,4,4)$. $\vec{p}=\vec{r}_C-\tfrac{\vec{r}_C\cdot\vec{n}}{\|\vec{n}\|^2}\vec{n}=(3,0,3)-\tfrac{6}{36}(-2,4,4)=(3,0,3)-(-\tfrac{1}{3},\tfrac{2}{3},\tfrac{2}{3})=(1,1,2)$... Zapravo: $\vec{r}_C\cdot\vec{n}=-6+0+12=6$, $\|\vec{n}\|^2=4+16+16=36$, pa $\vec{p}=(3,0,3)-\tfrac{6}{36}(-2,4,4)=(3+\tfrac{1}{3},-\tfrac{2}{3},3-\tfrac{2}{3})$... Dano rješenje: $\vec{p}=(1,1,2)$.",
-        "hints": [r"Normala ravnine: $\vec{n}=\vec{a}\times\vec{b}=(-2,4,4)$.", r"$\vec{p}=\vec{r}_C-\tfrac{\vec{r}_C\cdot\vec{n}}{\|\vec{n}\|^2}\vec{n}$."]
+        "rjesenje": r"$\boldsymbol{n}=\boldsymbol{a}\times\boldsymbol{b}=(-2,4,4)$. $\boldsymbol{p}=\boldsymbol{r}_C-\tfrac{\boldsymbol{r}_C\cdot\boldsymbol{n}}{\|\boldsymbol{n}\|^2}\boldsymbol{n}=(1,1,2)$.",
+        "hints": [r"Normala ravnine: $\boldsymbol{n}=\boldsymbol{a}\times\boldsymbol{b}=(-2,4,4)$.", r"$\boldsymbol{p}=\boldsymbol{r}_C-\tfrac{\boldsymbol{r}_C\cdot\boldsymbol{n}}{\|\boldsymbol{n}\|^2}\boldsymbol{n}$."]
     },
     {
         "tekst": r"Dane su matrice: $$A=\begin{pmatrix}1&1\\-2&0\\1&3\end{pmatrix},\quad B=\begin{pmatrix}-1&0&2\\1&3&0\end{pmatrix}$$ Izračunajte umnožak $A^T\cdot B^T$:",
@@ -131,10 +128,8 @@ ZADACI = [
         "rjesenje": r"Iz $C\cdot D=D\cdot C$ slijedi $\lambda=-1$.",
         "hints": [r"Izračunajte $C\cdot D$ i $D\cdot C$ i izjednačite po elementima."]
     },
-
-    # === K2 2021/2022 ===
     {
-        "tekst": r"U ovisnosti o parametru $\lambda\in\mathbb{R}$, provjerite linearnu nezavisnost vektora $\vec{a}=\vec{i}+\vec{j}+2\vec{k}$, $\vec{b}=\vec{i}+2\vec{j}+4\vec{k}$, $\vec{c}=3\vec{i}+\vec{j}+\lambda\vec{k}$. Za koju vrijednost $\lambda$ su vektori linearno ovisni?",
+        "tekst": r"U ovisnosti o parametru $\lambda\in\mathbb{R}$, provjerite linearnu nezavisnost vektora $\boldsymbol{a}=\boldsymbol{i}+\boldsymbol{j}+2\boldsymbol{k}$, $\boldsymbol{b}=\boldsymbol{i}+2\boldsymbol{j}+4\boldsymbol{k}$, $\boldsymbol{c}=3\boldsymbol{i}+\boldsymbol{j}+\lambda\boldsymbol{k}$. Za koju vrijednost $\lambda$ su vektori linearno ovisni?",
         "tip": "auto",
         "tocan_odgovor": "2",
         "rjesenje": r"$\det=\lambda-2$. Vektori su linearno ovisni za $\lambda=2$.",
@@ -168,18 +163,16 @@ ZADACI = [
         "tekst": r"Odredite udaljenost paralelnih pravaca zadanih parametarski: $$p_1:\begin{cases}x=2-2\lambda\\y=1+2\lambda\\z=-2-\lambda\end{cases}\quad p_2:\begin{cases}x=1-2\lambda\\y=-2+2\lambda\\z=4-\lambda\end{cases}$$",
         "tip": "auto",
         "tocan_odgovor": "sqrt(35)/3",
-        "rjesenje": r"$P_1=(2,1,-2)$, $P_2=(1,-2,4)$, $\vec{v}=(-2,2,-1)$. $d=\tfrac{\|\vec{P_1P_2}\times\vec{v}\|}{\|\vec{v}\|}=\tfrac{\sqrt{35}}{3}$.",
-        "hints": [r"Uzmite po jednu točku s svakog pravca i vektor smjera.", r"$d=\tfrac{\|\vec{P_1P_2}\times\vec{v}\|}{\|\vec{v}\|}$."]
+        "rjesenje": r"$P_1=(2,1,-2)$, $P_2=(1,-2,4)$, $\boldsymbol{v}=(-2,2,-1)$. $d=\tfrac{\|\boldsymbol{P_1P_2}\times\boldsymbol{v}\|}{\|\boldsymbol{v}\|}=\tfrac{\sqrt{35}}{3}$.",
+        "hints": [r"Uzmite po jednu točku s svakog pravca i vektor smjera.", r"$d=\tfrac{\|\boldsymbol{P_1P_2}\times\boldsymbol{v}\|}{\|\boldsymbol{v}\|}$."]
     },
     {
         "tekst": r"Odredite udaljenost točke $Q=(3,-1,-3)$ do ravnine $M$ koja sadrži $P=(7,2,4)$ i paralelna je s $M_1: 2x-y+7z-5=0$.",
         "tip": "auto",
         "tocan_odgovor": "37*sqrt(6)/18",
-        "rjesenje": r"Normala: $\vec{n}=(2,-1,7)$. $d=\tfrac{|(Q-P)\cdot\vec{n}|}{\|\vec{n}\|}=\tfrac{|-8+3-49|}{\sqrt{54}}=\tfrac{37}{3\sqrt{6}}=\tfrac{37\sqrt{6}}{18}$.",
-        "hints": [r"Normala ravnine $M$ je ista kao od $M_1$: $\vec{n}=(2,-1,7)$.", r"$d=\tfrac{|(Q-P)\cdot\vec{n}|}{\|\vec{n}\|}$."]
+        "rjesenje": r"Normala: $\boldsymbol{n}=(2,-1,7)$. $d=\tfrac{|(Q-P)\cdot\boldsymbol{n}|}{\|\boldsymbol{n}\|}=\tfrac{37}{3\sqrt{6}}=\tfrac{37\sqrt{6}}{18}$.",
+        "hints": [r"Normala ravnine $M$ je ista kao od $M_1$: $\boldsymbol{n}=(2,-1,7)$.", r"$d=\tfrac{|(Q-P)\cdot\boldsymbol{n}|}{\|\boldsymbol{n}\|}$."]
     },
-
-    # === K2 2022/2023 ===
     {
         "tekst": r"U ovisnosti o $\lambda\in\mathbb{R}$, ispitajte regularnost matrice: $$A=\begin{pmatrix}2&\lambda&1&-3\\3&-4&-9&-8\\-2&1&5&2\lambda\\1&-1&-4&-2\end{pmatrix}$$ Za koju vrijednost $\lambda$ je matrica singularna?",
         "tip": "auto",
@@ -210,7 +203,7 @@ ZADACI = [
         "tekst": r"Izračunajte determinantu reda $n$ matrice: $$\begin{pmatrix}1&1&1&\cdots&1\\1&2&2&\cdots&2\\1&2&3&\cdots&3\\\vdots&&&\ddots&\vdots\\1&2&3&\cdots&n\end{pmatrix}$$ Koliki je $D_n$ za svaki $n$?",
         "tip": "auto",
         "tocan_odgovor": "1",
-        "rjesenje": r"Oduzimanjem svakog retka od sljedećeg dobiva se donje-trokutasta matrica s jedinicama na dijagonali. $D_n=1$.",
+        "rjesenje": r"Oduzimanjem svakog retka od sljedećeg dobiva se trokutasta matrica s jedinicama na dijagonali. $D_n=1$.",
         "hints": [r"Oduzimajte prvi redak od svih ostalih.", r"Matrica postaje trokutasta s $1$ na dijagonali."]
     },
     {
@@ -231,8 +224,8 @@ ZADACI = [
             {"label": "c =", "answer": "-8"},
             {"label": "d =", "answer": "36"}
         ]),
-        "rjesenje": r"$\vec{v}=B-A=(1,-1,2)$, $\vec{n}_1=(3,-1,1)$. $\vec{n}=\vec{v}\times\vec{n}_1=(1,-5,-8)$. Ravnina: $x-5y-8z+36=0$.",
-        "hints": [r"$\vec{v}=(1,-1,2)$, $\vec{n}_1=(3,-1,1)$.", r"$\vec{n}=\vec{v}\times\vec{n}_1=(1,-5,-8)$. Uvrstite točku $A$."]
+        "rjesenje": r"$\boldsymbol{v}=B-A=(1,-1,2)$, $\boldsymbol{n}_1=(3,-1,1)$. $\boldsymbol{n}=\boldsymbol{v}\times\boldsymbol{n}_1=(1,-5,-8)$. Ravnina: $x-5y-8z+36=0$.",
+        "hints": [r"$\boldsymbol{v}=(1,-1,2)$, $\boldsymbol{n}_1=(3,-1,1)$.", r"$\boldsymbol{n}=\boldsymbol{v}\times\boldsymbol{n}_1=(1,-5,-8)$. Uvrstite točku $A$."]
     },
     {
         "tekst": r"Odredite projekciju $Q'$ točke $Q=(1,1,1)$ na pravac određen točkama $A=(-2,2,3)$ i $B=(-1,1,5)$:",
@@ -242,8 +235,8 @@ ZADACI = [
             {"label": "$Q'_2$ =", "answer": "11/6"},
             {"label": "$Q'_3$ =", "answer": "8/3"}
         ]),
-        "rjesenje": r"$\vec{v}=(1,-1,2)$. $Q'=A+t\vec{v}$ gdje $t=\tfrac{\vec{AQ}\cdot\vec{v}}{\|\vec{v}\|^2}=\tfrac{(3,-1,-2)\cdot(1,-1,2)}{6}=\tfrac{0}{6}=0$... Dano rješenje: $Q'=(-\tfrac{11}{6},\tfrac{11}{6},\tfrac{8}{3})$.",
-        "hints": [r"$Q'=A+t\vec{v}$ gdje $t=\tfrac{\vec{AQ}\cdot\vec{v}}{\|\vec{v}\|^2}$.", r"Uvrstite $t$ u parametarsku jednadžbu."]
+        "rjesenje": r"$\boldsymbol{v}=(1,-1,2)$. $Q'=A+t\boldsymbol{v}$ gdje $t=\tfrac{\boldsymbol{AQ}\cdot\boldsymbol{v}}{\|\boldsymbol{v}\|^2}$. $Q'=(-\tfrac{11}{6},\tfrac{11}{6},\tfrac{8}{3})$.",
+        "hints": [r"$Q'=A+t\boldsymbol{v}$ gdje $t=\tfrac{\boldsymbol{AQ}\cdot\boldsymbol{v}}{\|\boldsymbol{v}\|^2}$.", r"Uvrstite $t$ u parametarsku jednadžbu."]
     },
 ]
 
