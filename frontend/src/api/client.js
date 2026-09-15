@@ -1,4 +1,7 @@
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const BASE = import.meta.env.VITE_API_URL || 
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:8000" 
+    : "https://emathos.onrender.com");
 
 function getToken() {
   return localStorage.getItem("token");
