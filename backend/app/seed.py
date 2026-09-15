@@ -1,5 +1,3 @@
-
-
 from .database import Base, engine, SessionLocal
 from .config import settings
 from .security import hash_password
