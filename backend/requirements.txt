@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]
+gunicorn
 sqlalchemy
 bcrypt
 python-jose[cryptography]
