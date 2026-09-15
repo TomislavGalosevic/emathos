@@ -40,7 +40,6 @@ def register(data: schemas.UserCreate, db: Session = Depends(get_db)):
 def login(
     form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
-    # OAuth2PasswordRequestForm koristi polja 'username' i 'password' (form-data)
     user = db.query(models.User).filter(models.User.username == form.username).first()
     if not user or not verify_password(form.password, user.password_hash):
         raise HTTPException(

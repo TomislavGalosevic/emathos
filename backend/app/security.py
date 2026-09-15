@@ -7,7 +7,6 @@ from .config import settings
 
 
 def hash_password(password: str) -> str:
-    # bcrypt radi s najvise 72 bajta; duze lozinke se sigurno skrate
     pw = password.encode("utf-8")[:72]
     return bcrypt.hashpw(pw, bcrypt.gensalt()).decode("utf-8")
 

@@ -13,7 +13,7 @@ const TYPE_LABELS = {
 export default function TheoryEditor({ courseId, moduleId }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mode, setMode] = useState(null); // null | "new" | item-id-being-edited
+  const [mode, setMode] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -23,7 +23,6 @@ export default function TheoryEditor({ courseId, moduleId }) {
   useEffect(() => {
     load();
     setMode(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, moduleId]);
 
   async function remove(id) {

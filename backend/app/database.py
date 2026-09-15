@@ -3,7 +3,6 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .config import settings
 
-# connect_args potreban samo za SQLite (dozvoljava koristenje kroz vise threadova)
 connect_args = (
     {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
 )

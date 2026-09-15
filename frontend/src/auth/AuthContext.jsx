@@ -12,7 +12,6 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
-  // Pocetno ucitavanje: provjeri token s backendom, ostani ulogiran dok je token validan
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {

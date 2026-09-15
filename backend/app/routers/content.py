@@ -18,10 +18,7 @@ from .. import models, schemas
 
 router = APIRouter(prefix="/api", tags=["content"])
 
-
-# ---------------------------------------------------------------------------
-# Zadaci (Problem + Hint)
-# ---------------------------------------------------------------------------
+#zadaci
 @router.get("/problems", response_model=list[schemas.ProblemOut])
 def list_problems(
     course_id: int,
@@ -170,9 +167,7 @@ def mark_problem_seen(
     return {"ok": True}
 
 
-# ---------------------------------------------------------------------------
-# Teorija (TheoryItem)
-# ---------------------------------------------------------------------------
+#teorija
 @router.get("/theory", response_model=list[schemas.TheoryItemOut])
 def list_theory(
     course_id: int,
@@ -271,9 +266,6 @@ def mark_theory_seen(
     return progress
 
 
-# ---------------------------------------------------------------------------
-# Napredak (bilo koji ulogirani korisnik)
-# ---------------------------------------------------------------------------
 @router.get("/progress", response_model=list[schemas.ProgressOut])
 def my_progress(
     kind: str | None = Query(default=None),

@@ -80,7 +80,6 @@ body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink)
 .hex-wrap:hover .del { opacity: 1; }
 .del:hover { background: rgba(229,72,77,.25); }
 
-/* ---------- Teorija / Zadaci sekcije ---------- */
 .area { margin-bottom: 2rem; }
 .area-title { font-family: "Sora", sans-serif; font-size: 1.15rem; color: var(--blue-600);
   margin: 0 0 .8rem; padding-left: .1rem; }
@@ -101,7 +100,6 @@ body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink)
 
 @media (max-width: 520px) { .section-cards { grid-template-columns: 1fr; } }
 
-/* ---------- Editor: popis Teorije/Zadataka ---------- */
 .editor { display: flex; flex-direction: column; gap: 1rem; }
 .content-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .6rem; }
 .content-item { position: relative; background: var(--surface); border: 1px solid var(--line);
@@ -113,7 +111,6 @@ body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink)
 .badge-self { background: #fff2e0; color: #b5710a; }
 .badge-theory { background: var(--blue-50); color: var(--blue-600); }
 
-/* ---------- Novi zapis: forma ---------- */
 .new-form { background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
   padding: 1rem 1.1rem; display: flex; flex-direction: column; }
 .new-form label { margin-top: .8rem; }
@@ -124,7 +121,6 @@ body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink)
 .hint-row input { flex: 1; }
 .form-actions { display: flex; gap: .6rem; margin-top: 1.1rem; }
 
-/* ---------- MathText / MathInput (KaTeX) ---------- */
 .math-inline { display: inline-block; }
 .math-block { display: block; margin: .3rem 0; }
 .math-input textarea { width: 100%; resize: vertical; font-family: inherit; font-size: .95rem;
@@ -136,7 +132,7 @@ body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink)
 .math-preview-label { display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: 1px;
   color: var(--blue-600); margin-bottom: .25rem; }
 
-/* ---------- Panels (legacy - jos koristeno negdje) ---------- */
+
 .panels { display: grid; gap: 1rem; }
 .panel { position: relative; border-radius: 14px; padding: 1.1rem 1.2rem;
   background: var(--surface); border: 1px solid var(--line);
@@ -149,7 +145,6 @@ body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--ink)
   font-size: .85rem; padding: .1rem .3rem; border-radius: 6px; transition: color .2s, background .2s; }
 .del-mod:hover { color: #d93a3f; background: rgba(229,72,77,.12); }
 
-/* ---------- Inputs & buttons ---------- */
 input { background: #fff; border: 1px solid var(--line);
   border-radius: 9px; padding: .6rem .8rem; color: var(--ink); font-size: .95rem;
   outline: none; transition: border-color .2s, box-shadow .2s; }
@@ -172,7 +167,6 @@ button.ghost:hover { border-color: var(--blue); color: var(--blue); }
 .add-row input { flex: 1; min-width: 200px; }
 .empty { color: var(--muted); }
 
-/* ---------- Login ---------- */
 .login-wrap { max-width: 360px; margin: 4rem auto; padding: 0 1rem; }
 .back-link { display: inline-block; margin-bottom: 1rem; color: var(--muted);
   text-decoration: none; font-size: .9rem; transition: color .2s; }
@@ -190,7 +184,7 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .info { color: var(--blue-600); font-size: .85rem; background: var(--blue-50);
   border: 1px solid var(--sky); border-radius: 8px; padding: .5rem .7rem; }
 
-/* ---------- Pocetna (hero) ---------- */
+
 .hero { position: relative; z-index: 1; min-height: 100vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 2rem; }
@@ -199,7 +193,6 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
   font-size: clamp(2.2rem, 6vw, 3.4rem); color: var(--ink); margin: .2rem 0 1.4rem; }
 .big-btn { font-size: 1rem; padding: .7rem 1.7rem; }
 
-/* ---------- Motion in ---------- */
 .fade { animation: fade .4s ease both; }
 @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .pop { animation: pop .45s ease both; animation-delay: var(--d, 0ms); }
@@ -210,7 +203,6 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
   .hex, .hex-inner, button, input { transition: none; }
 }
 
-/* ---------- Ucenje: study layout, flashcard 3D flip, T/N, MCQ, fillin ---------- */
 .study { max-width: 640px; margin: 0 auto; }
 .study-progress { font-size: .82rem; color: var(--muted); margin-bottom: .8rem; display: flex; justify-content: space-between; align-items: center; }
 
@@ -220,7 +212,6 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
   padding: 1.4rem; box-shadow: 0 4px 14px rgba(28,110,242,.06); }
 .study-prompt { font-size: 1.05rem; margin: 0 0 1rem; }
 
-/* Flashcard: prava 3D rotacija oko X osi */
 .flashcard-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
 .flashcard-scene { width: 100%; min-height: 160px; perspective: 1400px; cursor: pointer; }
 .flashcard-3d { position: relative; width: 100%; height: 160px;
@@ -269,10 +260,8 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .arrow { color: var(--blue); }
 .hint-inline { color: var(--muted); font-style: normal; font-size: .85rem; }
 
-/* ---------- Hero actions (dva gumba) ---------- */
 .hero-actions { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; }
 
-/* ---------- Uredjivanje postojecih stavki ---------- */
 .item-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: .2rem; }
 .item-actions .del-mod, .item-actions .edit-mod { position: static; }
 .edit-mod { background: none; border: none; cursor: pointer; color: #c2c9d6;
@@ -281,7 +270,6 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .edit-label { color: var(--blue-600); font-weight: 600; font-size: .82rem; margin: 0 0 .3rem; }
 
 
-/* ---------- Napredak: mini bar na hex kartici kolegija ---------- */
 .hex-progress { display: flex; flex-direction: column; align-items: center; gap: .2rem;
   width: 100%; margin-top: .3rem; }
 .hex-progress-bar { width: 80%; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
@@ -290,7 +278,6 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .hex-progress-label { font-size: .68rem; color: var(--muted); font-weight: 600; }
 
 
-/* ---------- Rijeseno badge, hide-toggle, samoprocjena flashcard ---------- */
 .solved-badge { display: inline-block; background: #e6f6ec; color: #1f9254; font-size: .72rem;
   font-weight: 700; padding: .2rem .6rem; border-radius: 999px; margin-bottom: .7rem; }
 .hide-toggle { float: right; display: inline-flex; align-items: center; gap: .35rem;
@@ -299,7 +286,6 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .self-assess { display: flex; gap: .6rem; justify-content: center; }
 
 
-/* ---------- Odabir tipa teorije prije ucenja ---------- */
 .type-select { max-width: 640px; margin: 0 auto; }
 .type-select-label { font-weight: 600; color: var(--ink); margin-bottom: .8rem; }
 .type-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .7rem; margin-bottom: 1rem; }
@@ -314,7 +300,6 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 
 @media (max-width: 520px) { .type-grid { grid-template-columns: 1fr; } }
 
-/* ---------- Tint cijele kartice: zeleno (tocno) / crveno (netocno) ---------- */
 .study-card.card-correct { background: rgba(31,146,84,.08); border-color: #1f9254;
   transition: background-color .3s ease, border-color .3s ease; }
 .study-card.card-wrong { background: rgba(217,58,63,.08); border-color: #d93a3f;
@@ -323,11 +308,9 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .live-solved { color: var(--blue-600); font-weight: 600; }
 
 
-/* ---------- Pre-show tocnog odgovora kad je pitanje vec rijeseno ---------- */
 .fillin-input.prefilled-correct { color: #1f9254; font-weight: 600; border-color: #1f9254; }
 
 
-/* ---------- Popravak: preglednik nasilno posivi tekst disabled gumba ---------- */
 .mcq-opt, .tf-btn {
   color: var(--ink);
   opacity: 1;
@@ -370,7 +353,7 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .study-prompt { line-height: 2.4; }
 .study-card .katex .accent { overflow: visible; }
 .study-card .katex .mover { padding-top: 0.15em; }
-/* ── Choice (klikni opciju) ──────────────────────────────────────────────── */
+
 .choice-options { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 14px 0; }
 .choice-btn {
   padding: 0.5rem 1.2rem;
@@ -387,3 +370,29 @@ label { display: block; font-size: .82rem; margin: .7rem 0 .25rem; color: var(--
 .choice-btn.choice-correct   { border-color: #16a34a; background: #f0fdf4; color: #14532d; font-weight: 600; }
 .choice-btn.choice-wrong     { border-color: #dc2626; background: #fef2f2; color: #7f1d1d; }
 .choice-btn:disabled { cursor: default; }
+
+.point-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+.point-T    { font-size: 1.1rem; font-weight: 600; color: var(--ink); }
+.point-paren { font-size: 1.6rem; font-weight: 300; line-height: 1; color: var(--ink); }
+.point-comma { font-size: 1.1rem; color: var(--ink); }
+.point-coord-input {
+  width: 90px;
+  padding: 8px 10px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-align: center;
+  background: var(--surface);
+  color: var(--ink);
+  transition: border-color 0.15s;
+}
+.point-coord-input:focus { outline: none; border-color: var(--accent, #4a7cf7); }
+.point-coord-input.cell-ok  { border-color: #16a34a; background: #f0fdf4; }
+.point-coord-input.cell-bad { border-color: #dc2626; background: #fef2f2; }
+.point-coord-input:disabled { cursor: default; }

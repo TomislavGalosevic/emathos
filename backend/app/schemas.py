@@ -63,9 +63,8 @@ class CourseStructure(CourseOut):
     modules: list[ModuleOut] = []
 
 
-# ---------------------------------------------------------------------------
 # Teorija / Zadaci
-# ---------------------------------------------------------------------------
+
 class HintBase(BaseModel):
     sadrzaj: str
     redoslijed: int = 0
@@ -78,7 +77,7 @@ class HintOut(HintBase):
 
 class ProblemBase(BaseModel):
     tekst: str
-    tip: str = "auto"  # "auto" | "self"
+    tip: str = "auto"
     tocan_odgovor: str = ""
     rjesenje: str = ""
     redoslijed: int = 0
@@ -108,7 +107,7 @@ class ProblemOut(ProblemBase):
 
 
 class TheoryItemBase(BaseModel):
-    tip: str  # flashcard | truefalse | mcq | multi | fillin | match | order
+    tip: str 
     sadrzaj: dict
     redoslijed: int = 0
 
@@ -132,9 +131,7 @@ class TheoryItemOut(TheoryItemBase):
 
 
 
-# ---------------------------------------------------------------------------
 # Rjesavanje zadataka
-# ---------------------------------------------------------------------------
 class AnswerCheckRequest(BaseModel):
     odgovor: str
 
@@ -152,9 +149,7 @@ class ProgressOut(BaseModel):
 
 
 
-# ---------------------------------------------------------------------------
-# Agregirani napredak po kolegiju (za prikaz korisniku)
-# ---------------------------------------------------------------------------
+# napredak
 class AreaProgress(BaseModel):
     module_id: Optional[int] = None
     naziv: Optional[str] = None

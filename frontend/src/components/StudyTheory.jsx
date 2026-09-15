@@ -20,13 +20,13 @@ function shuffle(arr) {
 
 export default function StudyTheory({ courseId, moduleId }) {
   const [allItems, setAllItems] = useState([]);
-  const [solvedIds, setSolvedIds] = useState(new Set()); // stvarni (trajni) napredak
-  const [sessionSolvedIds, setSessionSolvedIds] = useState(new Set()); // brojac za "novi krug"
+  const [solvedIds, setSolvedIds] = useState(new Set());
+  const [sessionSolvedIds, setSessionSolvedIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
 
-  const [phase, setPhase] = useState("select"); // "select" | "study"
+  const [phase, setPhase] = useState("select");
   const [selectedType, setSelectedType] = useState(TYPE_OPTIONS[0].key);
-  const [resetRound, setResetRound] = useState(false); // "Sakrij rijeseno" -> zapravo "novi krug"
+  const [resetRound, setResetRound] = useState(false);
 
   const [queue, setQueue] = useState([]);
   const [idx, setIdx] = useState(0);
@@ -112,7 +112,6 @@ export default function StudyTheory({ courseId, moduleId }) {
     );
   }
 
-  // phase === "study"
   if (queue.length === 0) {
     return (
       <div className="study">
@@ -179,7 +178,7 @@ function tintClass(result) {
 
 function FlashcardItem({ item, solved, onMark, onDone }) {
   const [flipped, setFlipped] = useState(false);
-  const [result, setResult] = useState(null); // null | true | false
+  const [result, setResult] = useState(null);
 
   function assess(knowsIt) {
     setResult(knowsIt);

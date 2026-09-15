@@ -40,7 +40,6 @@ def create_course(
     db: Session = Depends(get_db),
     _: models.User = Depends(require_admin),
 ):
-    # Obican kolegij nema module; Teorija/Zadaci su fiksni u sucelju.
     course = models.Course(**data.model_dump())
     db.add(course)
     db.commit()

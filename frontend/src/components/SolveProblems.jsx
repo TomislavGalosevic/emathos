@@ -15,6 +15,14 @@ function normalize(s) {
   return (s || "").replace(/\s+/g, "").toLowerCase().replace(/,/g, ".").trim();
 }
 
+function parseCell(s) {
+  s = (s || "").replace(",", ".").trim();
+  if (!s) return NaN;
+  const m = s.match(/^(-?\d*\.?\d+)\s*\/\s*(-?\d*\.?\d+)$/);
+  if (m) return parseFloat(m[1]) / parseFloat(m[2]);
+  return parseFloat(s);
+}
+
 export default function SolveProblems({ courseId, moduleId, onProgressChange }) {
   const [problems, setProblems] = useState([]);
   const [solvedIds, setSolvedIds] = useState(new Set());
@@ -91,6 +99,8 @@ export default function SolveProblems({ courseId, moduleId, onProgressChange }) 
         <MultiProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
       ) : problem.tip === "choice" ? (
         <ChoiceProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
+      ) : problem.tip === "point" ? (
+        <PointProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
       ) : (
         <ProblemCard key={problem.id} problem={problem} solved={activeSolved.has(problem.id)} onSolved={() => markSolved(problem.id)} />
       )}
@@ -145,7 +155,7 @@ function ProblemCard({ problem, solved, onSolved }) {
       </div>
 
       {result === true && <p className="feedback feedback-ok">Točno! 🎉</p>}
-      {result === false && !locked && <p className="feedback feedback-bad">Netočno, pokušaj ponovno ili zatraži hint.</p>}
+      {result === false && !locked && <p className="feedback feedback-bad">Netočno.</p>}
 
       {problem.hints.length > 0 && !locked && result !== true && (
         <div className="hints-block">
@@ -177,22 +187,62 @@ function MultiProblemCard({ problem, solved, onSolved }) {
   let fields = [];
   try { fields = JSON.parse(problem.tocan_odgovor); } catch { fields = []; }
 
-  const [answers, setAnswers] = useState(() => fields.map(() => ""));
-  const [checked, setChecked] = useState(false);
-  const [results, setResults] = useState([]);
+  const [answers, setAnswers] = useState(() =>
+    fields.map(f =>
+      f.type === "matrix"
+        ? { rows: 2, cols: 2, cells: Array.from({ length: 5 }, () => Array(5).fill("")) }
+        : ""
+    )
+  );
+  const [checked, setChecked]       = useState(false);
+  const [results, setResults]       = useState([]);
+  const [dimErrors, setDimErrors]   = useState([]);
   const [showSolution, setShowSolution] = useState(false);
-  const [locked, setLocked] = useState(false);
+  const [locked, setLocked]         = useState(false);
   const [hintsShown, setHintsShown] = useState(0);
 
-  function updateAnswer(i, val) {
-    setAnswers((prev) => { const next = [...prev]; next[i] = val; return next; });
+  function setTextAnswer(i, val) {
+    setAnswers(prev => { const n = [...prev]; n[i] = val; return n; });
+  }
+  function setMatrixDim(i, key, val) {
+    setAnswers(prev => { const n = [...prev]; n[i] = { ...n[i], [key]: +val }; return n; });
+  }
+  function setMatrixCell(i, r, c, val) {
+    setAnswers(prev => {
+      const n = [...prev];
+      const cells = n[i].cells.map(row => [...row]);
+      cells[r][c] = val;
+      n[i] = { ...n[i], cells };
+      return n;
+    });
+  }
+
+  function checkField(f, ans) {
+    if (f.type === "choice") return normalize(ans) === normalize(f.answer);
+    if (f.type === "matrix") {
+      try {
+        const exp = JSON.parse(f.answer);
+        const er = exp.length, ec = exp[0].length;
+        if (ans.rows !== er || ans.cols !== ec) return null;
+        for (let r = 0; r < er; r++)
+          for (let c = 0; c < ec; c++) {
+            const uv = parseCell(ans.cells[r][c]);
+            const ev = parseCell(String(exp[r][c]));
+            if (isNaN(uv) || Math.abs(uv - ev) >= 0.01) return false;
+          }
+        return true;
+      } catch { return false; }
+    }
+    return normalize(ans) === normalize(f.answer);
   }
 
   function checkAll() {
-    const res = fields.map((f, i) => normalize(answers[i]) === normalize(f.answer));
-    setResults(res);
+    const res = fields.map((f, i) => checkField(f, answers[i]));
+    const dims = res.map(r => r === null);
+    setResults(res.map(r => r === null ? false : r));
+    setDimErrors(dims);
     setChecked(true);
-    if (res.every(Boolean)) {
+    if (res.every(r => r === true)) {
       setLocked(true);
       api.markProblemSeen(problem.id).catch(() => {});
       onSolved();
@@ -203,6 +253,15 @@ function MultiProblemCard({ problem, solved, onSolved }) {
     setShowSolution(true);
     setLocked(true);
     setChecked(false);
+    setAnswers(fields.map(f => {
+      if (f.type === "matrix") {
+        try {
+          const exp = JSON.parse(f.answer);
+          return { rows: exp.length, cols: exp[0].length, cells: exp.map(row => row.map(String)) };
+        } catch { return { rows: 2, cols: 2, cells: Array.from({length:5},()=>Array(5).fill("")) }; }
+      }
+      return f.answer;
+    }));
   }
 
   return (
@@ -211,26 +270,100 @@ function MultiProblemCard({ problem, solved, onSolved }) {
       <p className="study-prompt"><MathText text={problem.tekst} /></p>
 
       <div className="multi-fields">
-        {fields.map((f, i) => (
-          <div key={i} className="multi-field">
-            <label><MathText text={f.label} /></label>
-            <input
-              value={showSolution ? f.answer : answers[i]}
-              onChange={(e) => updateAnswer(i, e.target.value)}
-              disabled={locked}
-              placeholder="..."
-              onKeyDown={(e) => e.key === "Enter" && !locked && checkAll()}
-            />
-            {checked && !locked && results[i] === true && <span className="field-ok">✓</span>}
-            {checked && !locked && results[i] === false && (
-              <>
-                <span className="field-bad">✗</span>
-                <span className="field-correct">Točno: <MathText text={f.answer} /></span>
-              </>
-            )}
-            {showSolution && <span className="field-ok">✓</span>}
-          </div>
-        ))}
+        {fields.map((f, i) => {
+          const res = results[i];
+          const dimErr = dimErrors[i];
+
+          if (f.type === "choice") {
+            const opts = f.options || [];
+            return (
+              <div key={i} className="multi-field multi-field-choice">
+                <label><MathText text={f.label} /></label>
+                <div className="choice-options">
+                  {opts.map(opt => {
+                    const isSel = answers[i] === opt;
+                    let cls = "choice-btn";
+                    if (isSel && checked && locked && res === true)   cls += " choice-correct";
+                    else if (isSel && checked && res === false)       cls += " choice-wrong";
+                    else if (isSel)                                   cls += " choice-selected";
+                    return (
+                      <button key={opt} className={cls}
+                        onClick={() => !locked && setTextAnswer(i, opt)}
+                        disabled={locked}>
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+                {checked && !locked && res === true  && <span className="field-ok">✓</span>}
+                {checked && !locked && res === false && (
+                  <><span className="field-bad">✗</span>
+                    <span className="field-correct">Točno: <MathText text={f.answer} /></span></>
+                )}
+                {showSolution && <span className="field-ok">✓</span>}
+              </div>
+            );
+          }
+
+          if (f.type === "matrix") {
+            const state = answers[i];
+            return (
+              <div key={i} className="multi-field multi-field-matrix">
+                <label><MathText text={f.label} /></label>
+                <div className="matrix-size" style={{ marginBottom: "6px" }}>
+                  <span>Dim:</span>
+                  <select value={state.rows} disabled={locked}
+                    onChange={e => setMatrixDim(i, "rows", e.target.value)}>
+                    {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                  <span>×</span>
+                  <select value={state.cols} disabled={locked}
+                    onChange={e => setMatrixDim(i, "cols", e.target.value)}>
+                    {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </div>
+                <div className="matrix-grid" style={{ gridTemplateColumns: `repeat(${state.cols}, 60px)` }}>
+                  {Array.from({ length: state.rows }).map((_, r) =>
+                    Array.from({ length: state.cols }).map((_, c) => (
+                      <input key={`${r}-${c}`}
+                        value={state.cells[r]?.[c] || ""}
+                        onChange={e => setMatrixCell(i, r, c, e.target.value)}
+                        disabled={locked}
+                        className={
+                          checked && cellOk(results[i], r, c) === true  ? "cell-ok"  :
+                          checked && cellOk(results[i], r, c) === false ? "cell-bad" : ""
+                        }
+                      />
+                    ))
+                  )}
+                </div>
+                {dimErr    && <p className="feedback feedback-bad" style={{marginTop:"4px"}}>Dimenzije nisu ispravne.</p>}
+                {checked && !locked && !dimErr && res === true  && <span className="field-ok">✓</span>}
+                {checked && !locked && !dimErr && res === false && <span className="field-bad">✗</span>}
+                {showSolution && <span className="field-ok">✓</span>}
+              </div>
+            );
+          }
+
+          return (
+            <div key={i} className="multi-field">
+              <label><MathText text={f.label} /></label>
+              <input
+                value={showSolution ? f.answer : answers[i]}
+                onChange={e => setTextAnswer(i, e.target.value)}
+                disabled={locked}
+                placeholder="..."
+                onKeyDown={e => e.key === "Enter" && !locked && checkAll()}
+              />
+              {checked && !locked && res === true  && <span className="field-ok">✓</span>}
+              {checked && !locked && res === false && (
+                <><span className="field-bad">✗</span>
+                  <span className="field-correct">Točno: <MathText text={f.answer} /></span></>
+              )}
+              {showSolution && <span className="field-ok">✓</span>}
+            </div>
+          );
+        })}
       </div>
 
       {!locked && (
@@ -239,7 +372,7 @@ function MultiProblemCard({ problem, solved, onSolved }) {
         </div>
       )}
 
-      {checked && locked && <p className="feedback feedback-ok">Sve točno! 🎉</p>}
+      {checked && locked  && <p className="feedback feedback-ok">Sve točno! 🎉</p>}
       {checked && !locked && !results.every(Boolean) && (
         <p className="feedback feedback-bad">Nisu svi odgovori točni.</p>
       )}
@@ -250,7 +383,7 @@ function MultiProblemCard({ problem, solved, onSolved }) {
             <p key={h.id} className="hint-reveal">💡 <MathText text={h.sadrzaj} /></p>
           ))}
           {hintsShown < problem.hints.length && (
-            <button className="ghost" onClick={() => setHintsShown((n) => n + 1)}>
+            <button className="ghost" onClick={() => setHintsShown(n => n + 1)}>
               Pokaži hint ({hintsShown + 1}/{problem.hints.length})
             </button>
           )}
@@ -266,12 +399,14 @@ function MultiProblemCard({ problem, solved, onSolved }) {
   );
 }
 
+function cellOk(fieldResult, r, c) { return undefined; }
+
 function ChoiceProblemCard({ problem, solved, onSolved }) {
   let options = [];
   try { options = JSON.parse(problem.tocan_odgovor).options; } catch { options = []; }
 
   const [selected, setSelected] = useState(null);
-  const [result, setResult] = useState(null); // true | false | null
+  const [result, setResult] = useState(null); 
   const [hintsShown, setHintsShown] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
   const locked = result === true || showSolution;
@@ -311,7 +446,7 @@ function ChoiceProblemCard({ problem, solved, onSolved }) {
       </div>
 
       {result === true  && <p className="feedback feedback-ok">Točno! 🎉</p>}
-      {result === false && !locked && <p className="feedback feedback-bad">Netočno, pokušaj ponovno ili zatraži hint.</p>}
+      {result === false && !locked && <p className="feedback feedback-bad">Netočno.</p>}
 
       {problem.hints.length > 0 && !locked && result !== true && (
         <div className="hints-block">
@@ -334,6 +469,82 @@ function ChoiceProblemCard({ problem, solved, onSolved }) {
             <div className="solution-text"><strong>Rješenje:</strong> <MathText text={problem.rjesenje} /></div>
           ) : null}
         </div>
+      )}
+    </div>
+  );
+}
+
+function PointProblemCard({ problem, solved, onSolved }) {
+  const [xVal, setXVal] = useState("");
+  const [yVal, setYVal] = useState("");
+  const [result, setResult]     = useState(null);
+  const [locked, setLocked]     = useState(false);
+  const [hintsShown, setHintsShown] = useState(0);
+  const [showSolution, setShowSolution] = useState(false);
+
+  async function handleCheck() {
+    if (locked || (!xVal.trim() && !yVal.trim())) return;
+    const combined = `(${xVal.trim()}, ${yVal.trim()})`;
+    try {
+      const r = await api.checkProblem(problem.id, combined);
+      setResult(r.tocno);
+      if (r.tocno) { setLocked(true); onSolved(); }
+    } catch { setResult(false); }
+  }
+
+  function revealSolution() {
+    setShowSolution(true);
+    setLocked(true);
+    setResult(null);
+    try {
+      const s = problem.tocan_odgovor.replace(/^[Tt]?\s*\(/, "").replace(/\)\s*$/, "");
+      const parts = s.split(",");
+      if (parts.length === 2) { setXVal(parts[0].trim()); setYVal(parts[1].trim()); }
+    } catch {}
+  }
+
+  const inputCls = `point-coord-input${result === true ? " cell-ok" : result === false ? " cell-bad" : ""}`;
+
+  return (
+    <div className="study-card">
+      {solved && <span className="solved-badge">✓ Riješeno</span>}
+      <p className="study-prompt"><MathText text={problem.tekst} /></p>
+
+      <div className="point-input-wrapper">
+        <span className="point-T">T</span>
+        <span className="point-paren">(</span>
+        <input className={inputCls} value={xVal} onChange={e => setXVal(e.target.value)}
+          disabled={locked} placeholder="x" onKeyDown={e => e.key === "Enter" && handleCheck()} />
+        <span className="point-comma">,</span>
+        <input className={inputCls} value={yVal} onChange={e => setYVal(e.target.value)}
+          disabled={locked} placeholder="y" onKeyDown={e => e.key === "Enter" && handleCheck()} />
+        <span className="point-paren">)</span>
+        {!locked && <button className="solid" onClick={handleCheck}>Provjeri</button>}
+      </div>
+
+      {result === true  && <p className="feedback feedback-ok">Točno! 🎉</p>}
+      {result === false && <p className="feedback feedback-bad">Netočno.</p>}
+
+      {problem.hints.length > 0 && !locked && (
+        <div className="hints-block">
+          {problem.hints.slice(0, hintsShown).map(h => (
+            <p key={h.id} className="hint-reveal">💡 <MathText text={h.sadrzaj} /></p>
+          ))}
+          {hintsShown < problem.hints.length && (
+            <button className="ghost" onClick={() => setHintsShown(n => n + 1)}>
+              Pokaži hint ({hintsShown + 1}/{problem.hints.length})
+            </button>
+          )}
+        </div>
+      )}
+
+      {problem.rjesenje && !locked && (
+        <div className="solution-block">
+          <button className="ghost" onClick={revealSolution}>Prikaži rješenje</button>
+        </div>
+      )}
+      {showSolution && problem.rjesenje && (
+        <div className="solution-text"><strong>Rješenje:</strong> <MathText text={problem.rjesenje} /></div>
       )}
     </div>
   );
@@ -379,8 +590,8 @@ function MatrixProblemCard({ problem, solved, onSolved }) {
     for (let r = 0; r < rows; r++) {
       results[r] = [];
       for (let c = 0; c < cols; c++) {
-        const userVal = parseFloat(cells[r][c].replace(",", "."));
-        const expVal = parseFloat(exp[r][c]);
+        const userVal = parseCell(cells[r][c]);
+        const expVal = parseCell(String(exp[r][c]));
         const ok = !isNaN(userVal) && Math.abs(userVal - expVal) < 0.01;
         results[r][c] = ok;
         if (!ok) allOk = false;

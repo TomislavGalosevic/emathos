@@ -11,7 +11,7 @@ const YEARS = [
   { n: 3, rimski: "III", rijec: "Treća godina" },
 ];
 
-// Ovi kolegiji nemaju teoriju (samo zadaci) - ne prikazuj admin editor za Teoriju.
+// Ovi kolegiji nemaju teoriju (samo zadaci)
 const NO_THEORY_COURSES = [
   "Primijenjena matematika za racunalnu znanost",
   "Primjena diferencijalnog i integralnog racuna",

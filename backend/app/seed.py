@@ -1,19 +1,11 @@
-"""Pocetno punjenje baze: admin + popis kolegija.
 
-Pokretanje (iz mape backend/):  python -m app.seed
-Idempotentno: ne duplira kolegije koji vec postoje.
-
-Struktura:
-  - obicni kolegiji nemaju module (Teorija/Zadaci su fiksni u sucelju)
-  - Primijenjena matematika ima 3 fiksna podrucja (module)
-"""
 
 from .database import Base, engine, SessionLocal
 from .config import settings
 from .security import hash_password
 from . import models
 
-# (godina, naziv, [podrucja]) — podrucja SAMO za Primijenjenu
+# kolegiji
 COURSES = [
     (1, "Diferencijalni racun", []),
     (1, "Integralni racun", []),
