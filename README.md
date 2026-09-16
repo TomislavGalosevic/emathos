@@ -63,6 +63,10 @@ Frontend dostupan na `http://localhost:5173`.
 
 **Admin kredencijali:** `admin` / `admin123`
 
+*(Napomena: `.db` datoteke baze su dodane u `.gitignore` kako bi se spriječilo dupliciranje podataka na produkcijskom serveru.)*
+
+---
+
 ---
 
 ## Kolegiji i sadržaj
@@ -121,6 +125,7 @@ emathos/
 │   │   └── pages/
 │   └── vite.config.js
 ├── render.yaml                   # Render deployment config
+├── .gitignore                    # Ignorira .db datoteke
 └── README.md
 ```
 
@@ -133,8 +138,8 @@ Backend (`emathos`) i frontend (`emathos-1`) deployjaju se automatski pri svakom
 | | Backend | Frontend |
 |-|---------|----------|
 | Runtime | Python 3 | Static |
-| Build | `pip install -r backend/requirements.txt && cd backend && python -m app.seed` |  `npm run build` |
-| Start | `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT` | — |
+| Build | `cd backend && pip install -r requirements.txt` |  `npm run build` |
+| Start | `cd backend && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port $PORT` | — |
 
 **Environment varijable (backend):**
 
