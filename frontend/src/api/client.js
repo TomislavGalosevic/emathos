@@ -1,6 +1,6 @@
 const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
-// Popravljen URL na "emathos-1.onrender.com" i osigurano čišćenje kosih crta
+// Točan Render backend URL i sigurno čišćenje kosih crta
 const rawBase = import.meta.env.VITE_API_URL || 
   (isLocal ? "http://localhost:8000" : "https://emathos-1.onrender.com");
 
@@ -23,7 +23,6 @@ async function request(path, { method = "GET", body, form, auth = true } = {}) {
     headers["Content-Type"] = "application/json";
   }
 
-  // Pripazi da putanja uvijek počinje s /
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   const res = await fetch(`${BASE}${cleanPath}`, { method, headers, body: payload });
 
@@ -34,8 +33,11 @@ async function request(path, { method = "GET", body, form, auth = true } = {}) {
     } catch (_) {}
     throw new Error(detail);
   }
+
+  // Sigurno rukovanje praznim odgovorom (npr. 204 No Content ili prazan body pri registraciji)
   if (res.status === 204) return null;
-  return res.json();
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 function qs(params) {
