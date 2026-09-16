@@ -10,7 +10,7 @@ from .. import models, schemas
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
-@router.post("/register", response_model=schemas.Token, status_code=201)
+@router.post("/register", status_code=201)
 def register(data: schemas.UserCreate, db: Session = Depends(get_db)):
     exists = (
         db.query(models.User)
@@ -33,7 +33,18 @@ def register(data: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(user)
 
     token = create_access_token({"sub": str(user.id), "role": user.role})
-    return {"access_token": token, "user": user}
+    
+    # Eksplicitno vraćamo ispravan rječnik koji frontend očekuje
+    return {
+        "access_token": token, 
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role
+        }
+    }
 
 
 @router.post("/login", response_model=schemas.Token)
@@ -47,7 +58,7 @@ def login(
             detail="Pogresno korisnicko ime ili lozinka",
         )
     token = create_access_token({"sub": str(user.id), "role": user.role})
-    return {"access_token": token, "user": user}
+    return {"access_token": token, "token_type": "bearer", "user": user}
 
 
 @router.get("/me", response_model=schemas.UserOut)
