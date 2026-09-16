@@ -1,7 +1,10 @@
-const BASE = import.meta.env.VITE_API_URL || 
-  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:8000" 
-    : "https://emathos.onrender.com");
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+// Popravljen URL na "emathos-1.onrender.com" i osigurano čišćenje kosih crta
+const rawBase = import.meta.env.VITE_API_URL || 
+  (isLocal ? "http://localhost:8000" : "https://emathos-1.onrender.com");
+
+const BASE = rawBase.replace(/\/$/, "");
 
 function getToken() {
   return localStorage.getItem("token");
@@ -20,7 +23,9 @@ async function request(path, { method = "GET", body, form, auth = true } = {}) {
     headers["Content-Type"] = "application/json";
   }
 
-  const res = await fetch(`${BASE}${path}`, { method, headers, body: payload });
+  // Pripazi da putanja uvijek počinje s /
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const res = await fetch(`${BASE}${cleanPath}`, { method, headers, body: payload });
 
   if (!res.ok) {
     let detail = `Greska ${res.status}`;
