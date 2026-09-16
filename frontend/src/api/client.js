@@ -1,12 +1,7 @@
-const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-
-const rawBase = import.meta.env.VITE_API_URL || 
-  (isLocal ? "http://localhost:8000" : "https://emathos-1.onrender.com");
-
-const BASE = rawBase.replace(/\/$/, "");
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function getToken() {
-  return localStorage.getItem("token");
+  return sessionStorage.getItem("token");
 }
 
 async function request(path, { method = "GET", body, form, auth = true } = {}) {
@@ -22,8 +17,7 @@ async function request(path, { method = "GET", body, form, auth = true } = {}) {
     headers["Content-Type"] = "application/json";
   }
 
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  const res = await fetch(`${BASE}${cleanPath}`, { method, headers, body: payload });
+  const res = await fetch(`${BASE}${path}`, { method, headers, body: payload });
 
   if (!res.ok) {
     let detail = `Greska ${res.status}`;
@@ -32,15 +26,8 @@ async function request(path, { method = "GET", body, form, auth = true } = {}) {
     } catch (_) {}
     throw new Error(detail);
   }
-
   if (res.status === 204) return null;
-  const text = await res.text();
-  
-  if (!text) {
-    throw new Error("Posluzitelj je vratio prazan odgovor.");
-  }
-
-  return JSON.parse(text);
+  return res.json();
 }
 
 function qs(params) {
