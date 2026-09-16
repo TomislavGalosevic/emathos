@@ -1,6 +1,5 @@
 const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
-// Točan Render backend URL i sigurno čišćenje kosih crta
 const rawBase = import.meta.env.VITE_API_URL || 
   (isLocal ? "http://localhost:8000" : "https://emathos-1.onrender.com");
 
@@ -34,10 +33,14 @@ async function request(path, { method = "GET", body, form, auth = true } = {}) {
     throw new Error(detail);
   }
 
-  // Sigurno rukovanje praznim odgovorom (npr. 204 No Content ili prazan body pri registraciji)
   if (res.status === 204) return null;
   const text = await res.text();
-  return text ? JSON.parse(text) : null;
+  
+  if (!text) {
+    throw new Error("Posluzitelj je vratio prazan odgovor.");
+  }
+
+  return JSON.parse(text);
 }
 
 function qs(params) {

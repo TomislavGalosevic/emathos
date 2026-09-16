@@ -34,15 +34,14 @@ def register(data: schemas.UserCreate, db: Session = Depends(get_db)):
 
     token = create_access_token({"sub": str(user.id), "role": user.role})
     
-    # Eksplicitno vraćamo ispravan rječnik koji frontend očekuje
     return {
-        "access_token": token, 
+        "access_token": token,
         "token_type": "bearer",
         "user": {
             "id": user.id,
             "username": user.username,
             "email": user.email,
-            "role": user.role
+            "role": user.role,
         }
     }
 
