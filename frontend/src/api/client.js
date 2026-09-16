@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const BASE = (import.meta.env.VITE_API_URL || (isLocal ? "http://localhost:8000" : "https://emathos.onrender.com")).replace(/\/$/, "");
 
 function getToken() {
   return sessionStorage.getItem("token");
